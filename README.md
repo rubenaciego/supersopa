@@ -1,2 +1,2 @@
-# supersopa
+# SuperSopa
 FIB Algorithmics project
