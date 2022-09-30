@@ -2,8 +2,14 @@ CPPFLAGS = -g
 LDFLAGS =-g
 LDLIBS =
 
-SOURCES = main.cpp sopasolver.cpp sortedvec.cpp trie.cpp bloom.cpp hashmap.cpp
+SOURCES = src/main.cpp src/sopasolver.cpp src/sortedvec.cpp src/trie.cpp src/bloom.cpp src/hashmap.cpp
 OBJS = $(subst .cpp,.o,$(SOURCES))
 
 supersopa: $(OBJS)
 	g++ $(LDFLAGS) -o supersopa $(OBJS) $(LDLIBS)
+
+clean:
+	rm src/*.o -f
+
+distclean: clean
+	rm supersopa -f
