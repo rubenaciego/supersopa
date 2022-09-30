@@ -11,7 +11,7 @@ int main(int argc, const char* argv[])
     int option;
     std::cin >> option;
 
-    SopaSolver* solver;
+    SopaSolver* solver = nullptr;
 
     switch (option)
     {
@@ -21,6 +21,11 @@ int main(int argc, const char* argv[])
         case 4: solver = new HashMapSolver; break;
         default: std::cout << "Incorrect option" << std::endl;
     }
+
+    solver->initSopa(15, {"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
+    solver->printSopa();
+
+    if (solver != nullptr) delete solver;
 
     return 0;
 }
