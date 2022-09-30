@@ -50,6 +50,7 @@ void SopaSolver::initSopa(int n, const std::list<std::string>& words)
 
 bool SopaSolver::putWord(const std::string& word)
 {
+    if (word.empty()) return true;
     int n = sopa.size();
     std::uniform_int_distribution<std::mt19937::result_type> distPos(0, n - 1);
     std::uniform_int_distribution<std::mt19937::result_type> distDir(0, 7);
@@ -62,10 +63,13 @@ bool SopaSolver::putWord(const std::string& word)
     std::list<std::pair<int, int>> used;
 
     int pos = 0;
-    while (pos != word.length())
+    while (true)
     {
         used.push_back({r, c});
-        sopa[r][c] = word[pos];
+        sopa[r][c] = word[pos++];
+        
+        if (pos == word.length()) break;
+        
         int nextdir = distDir(rng);
         bool found = false;
 
@@ -103,8 +107,6 @@ bool SopaSolver::putWord(const std::string& word)
 
             return false;
         }
-
-        ++pos;
     }
 
     return true;
