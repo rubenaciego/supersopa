@@ -1,5 +1,5 @@
 CPPFLAGS = -g
-LDFLAGS =-g
+LDFLAGS = -g
 LDLIBS =
 
 SOURCES = src/main.cpp src/sopasolver.cpp src/sortedvec.cpp src/trie.cpp src/bloom.cpp src/hashmap.cpp
