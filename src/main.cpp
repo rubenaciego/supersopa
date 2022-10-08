@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 
 #include "sortedvec.hpp"
 #include "trie.hpp"
@@ -22,10 +23,20 @@ int main(int argc, const char* argv[])
         default: std::cout << "Incorrect option" << std::endl;
     }
 
-    solver->initSopa(15, {"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
+    solver->initSopa(5, {"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
     solver->printSopa();
 
-    if (solver != nullptr) delete solver;
+    std::list<std::string> found;
+    auto t1 = std::chrono::high_resolution_clock::now();
+    solver->findWords(found);
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto duration = duration_cast<std::chrono::milliseconds>(t2 - t1);
+
+    std::cout << "Following words found in " << duration.count() << "ms:" << std::endl;
+
+    for(std::list<std::string>::const_iterator it = found.begin(); it != found.end(); ++it) std::cout << *it << std::endl;
+
+    //if (solver != nullptr) delete solver;
 
     return 0;
 }
