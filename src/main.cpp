@@ -1,12 +1,22 @@
 #include <iostream>
+#include <chrono>
 
 #include "sortedvec.hpp"
 #include "trie.hpp"
 #include "bloom.hpp"
 #include "hashmap.hpp"
 
+std::list<std::string> readDictionary() {
+  std::list<std::string> l;
+  std::string s;
+  while (std::cin >> s) l.push_back(s);
+  return l;
+}
+
 int main(int argc, const char* argv[])
 {
+    //std::list<std::string> d = readDictionary();
+
     std::cout << "Choose implementation:\n\t1. Sorted vector\n\t2. Trie\n\t3. Bloom filter\n\t4. Hash map" << std::endl;
     int option;
     std::cin >> option;
@@ -23,15 +33,21 @@ int main(int argc, const char* argv[])
     }
 
     solver->initSopa(15, {"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
+    //solver->initSopa(5, d);
     solver->printSopa();
     std::cout << std::endl;
 
-    std::unordered_set<std::string> res;
     solver->initWords({"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
-    solver->findWords(res);
 
-    for (const std::string& s : res)
-        std::cout << s << std::endl;
+    std::unordered_set<std::string> found;
+    auto t1 = std::chrono::high_resolution_clock::now();
+    solver->findWords(found);
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+
+    std::cout << "Following words found in " << duration.count() << "ms:" << std::endl;
+
+    for(const std::string& s : found) std::cout << s << std::endl;
 
     if (solver != nullptr) delete solver;
 

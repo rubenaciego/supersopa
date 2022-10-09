@@ -46,6 +46,7 @@ void SopaSolver::initSopa(int n, const std::list<std::string>& words)
                 sopa[i][j] = distChar(rng);
         }
     }
+    initWords(words);
 }
 
 bool SopaSolver::putWord(const std::string& word)
@@ -67,9 +68,9 @@ bool SopaSolver::putWord(const std::string& word)
     {
         used.push_back({r, c});
         sopa[r][c] = word[pos++];
-        
+
         if (pos == word.length()) break;
-        
+
         int nextdir = distDir(rng);
         bool found = false;
 

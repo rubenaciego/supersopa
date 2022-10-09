@@ -1,4 +1,4 @@
-CPPFLAGS = -g -std=c++17
+CPPFLAGS = -g -std=c++17 -O3
 LDFLAGS = -g
 LDLIBS =
 
