@@ -8,6 +8,8 @@ struct node {
   int iters;
   std::string word;
   std::vector<std::vector<bool> > visited;
+  int left;
+  int right;
 };
 
 class SortedVecSolver : public SopaSolver

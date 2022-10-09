@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <queue>
 #include <utility>
+#include <string>
 
 void SortedVecSolver::initWords(const std::list<std::string>& words) {
   size_d = words.size();
@@ -23,12 +24,40 @@ bool posValid(int i, int j, int n) {
   return ((i >= 0) && (i < n) && (j >= 0) && (j < n));
 }
 
+bool BinarySearch(const std::vector<std::string>& v, std::string word, int l, int r) {
+  if (l > r) return false;
+
+  int mid;
+  mid = (l + r)/2;
+
+  if(v[mid] == word) return true;
+  else if(v[mid] > word) return BinarySearch(v, word, l, mid-1);
+  else return BinarySearch(v, word, mid+1, r);
+}
+
+int lowerBound(const std::vector<std::string>& v, std::string word, int l, int r, bool& found) {
+  if (l >= r) return r;
+  int mid = (l+r)/2;
+  if (v[mid] == word) found = true;
+  if (v[mid] < word) return lowerBound(v, word, mid+1, r, found);
+  else return lowerBound(v, word, l, mid, found);
+}
+
+int upperBound(const std::vector<std::string>& v, std::string word, int l, int r, int size) {
+  if (l >= r) return r;
+  int mid = (l+r)/2;
+  if(v[mid].substr(0, size) <= word) return upperBound(v, word, mid+1, r, size);
+  else return upperBound(v, word, l, mid, size);
+}
+
 void SortedVecSolver::search(int i0, int j0, std::list<std::string>& found, int n) {
   std::vector<std::vector<bool> > visited(n, std::vector<bool> (n, false));
   //visited[i0][j0] = true;
 
   //std::cout << visited[0][0] << " " << visited[0][1] << std::endl;
   //std::cout << visited[1][0] << " " << visited[1][1] << std::endl;
+
+  int n_iters = 0;
 
   std::queue<node> q;
   node start;
@@ -37,9 +66,12 @@ void SortedVecSolver::search(int i0, int j0, std::list<std::string>& found, int 
   start.iters = 0;
   start.word = "";
   start.visited = visited;
+  start.left = 0;
+  start.right = d.size()-1;
   q.push(start);
 
   while (!q.empty()) {
+    ++n_iters;
     node cur = q.front();
     int i = cur.i;
     int j = cur.j;
@@ -49,47 +81,55 @@ void SortedVecSolver::search(int i0, int j0, std::list<std::string>& found, int 
     cur.visited[i][j] = true;
     ++cur.iters;
 
-    if (std::binary_search(d.begin(), d.end(), cur.word)) found.push_back(cur.word);
+    bool foundBound = false;
 
-    if (posValid(i+1,j,n) && (!cur.visited[i+1][j]) && (cur.iters <= max_length) && (cur.word <= d[size_d-1])) {
+    cur.left = lowerBound(d, cur.word, cur.left, cur.right, foundBound);
+
+    if (cur.word > d[size_d-1]) cur.left = size_d;
+    else cur.right = upperBound(d, cur.word, cur.left, cur.right, cur.word.length());
+
+    if (foundBound) found.push_back(cur.word);
+    else if (BinarySearch(d, cur.word, cur.left, cur.right)) found.push_back(cur.word);
+
+    if (posValid(i+1,j,n) && (!cur.visited[i+1][j]) && (cur.iters <= max_length) && (cur.left <= cur.right)) {
       node next = cur;
       ++next.i;
       q.push(next);
     }
-    if (posValid(i,j+1,n) && (!cur.visited[i][j+1]) && (cur.iters <= max_length) && (cur.word <= d[size_d-1])) {
+    if (posValid(i,j+1,n) && (!cur.visited[i][j+1]) && (cur.iters <= max_length) && (cur.left <= cur.right)) {
       node next = cur;
       ++next.j;
       q.push(next);
     }
-    if (posValid(i+1,j+1,n) && (!cur.visited[i+1][j+1]) && (cur.iters <= max_length) && (cur.word <= d[size_d-1])) {
+    if (posValid(i+1,j+1,n) && (!cur.visited[i+1][j+1]) && (cur.iters <= max_length) && (cur.left <= cur.right)) {
       node next = cur;
       ++next.i;
       ++next.j;
       q.push(next);
     }
-    if (posValid(i-1,j,n) && (!cur.visited[i-1][j]) && (cur.iters <= max_length) && (cur.word <= d[size_d-1])) {
+    if (posValid(i-1,j,n) && (!cur.visited[i-1][j]) && (cur.iters <= max_length) && (cur.left <= cur.right)) {
       node next = cur;
       --next.i;
       q.push(next);
     }
-    if (posValid(i,j-1,n) && (!cur.visited[i][j-1]) && (cur.iters <= max_length) && (cur.word <= d[size_d-1])) {
+    if (posValid(i,j-1,n) && (!cur.visited[i][j-1]) && (cur.iters <= max_length) && (cur.left <= cur.right)) {
       node next = cur;
       --next.j;
       q.push(next);
     }
-    if (posValid(i-1,j-1,n) && (!cur.visited[i-1][j-1]) && (cur.iters <= max_length) && (cur.word <= d[size_d-1])) {
+    if (posValid(i-1,j-1,n) && (!cur.visited[i-1][j-1]) && (cur.iters <= max_length) && (cur.left <= cur.right)) {
       node next = cur;
       --next.i;
       --next.j;
       q.push(next);
     }
-    if (posValid(i-1,j+1,n) && (!cur.visited[i-1][j+1]) && (cur.iters <= max_length) && (cur.word <= d[size_d-1])) {
+    if (posValid(i-1,j+1,n) && (!cur.visited[i-1][j+1]) && (cur.iters <= max_length) && (cur.left <= cur.right)) {
       node next = cur;
       --next.i;
       ++next.j;
       q.push(next);
     }
-    if (posValid(i+1,j-1,n) && (!cur.visited[i+1][j-1]) && (cur.iters < max_length) && (cur.word <= d[size_d-1])) {
+    if (posValid(i+1,j-1,n) && (!cur.visited[i+1][j-1]) && (cur.iters < max_length) && (cur.left <= cur.right)) {
       node next = cur;
       ++next.i;
       --next.j;
@@ -100,6 +140,7 @@ void SortedVecSolver::search(int i0, int j0, std::list<std::string>& found, int 
 
 void SortedVecSolver::findWords(std::list<std::string>& found) {
   int n = sopa.size();
+  int total_iters = 0;
 
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
