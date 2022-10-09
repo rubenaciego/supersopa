@@ -21,6 +21,10 @@ int main(int argc, const char* argv[])
     int option;
     std::cin >> option;
 
+    std::cout << "SuperSopa size: ";
+    int size;
+    std::cin >> size;
+
     SopaSolver* solver = nullptr;
 
     switch (option)
@@ -32,7 +36,7 @@ int main(int argc, const char* argv[])
         default: std::cout << "Incorrect option" << std::endl;
     }
 
-    solver->initSopa(15, {"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
+    solver->initSopa(size, {"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
     //solver->initSopa(5, d);
     solver->printSopa();
     std::cout << std::endl;
