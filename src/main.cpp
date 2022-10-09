@@ -24,6 +24,14 @@ int main(int argc, const char* argv[])
 
     solver->initSopa(15, {"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
     solver->printSopa();
+    std::cout << std::endl;
+
+    std::unordered_set<std::string> res;
+    solver->initWords({"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
+    solver->findWords(res);
+
+    for (const std::string& s : res)
+        std::cout << s << std::endl;
 
     if (solver != nullptr) delete solver;
 

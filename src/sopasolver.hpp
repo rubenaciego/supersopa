@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 #include <random>
+#include <unordered_set>
 
 class SopaSolver
 {
@@ -16,7 +17,7 @@ public:
     void printSopa() const;
 
     virtual void initWords(const std::list<std::string>& words) = 0;
-    virtual void findWords(std::list<std::string>& found) = 0;
+    virtual void findWords(std::unordered_set<std::string>& found) = 0;
 
 protected:
     void initSopaEmpty(int n);
