@@ -83,10 +83,11 @@ void SortedVecSolver::search(int i0, int j0, std::list<std::string>& found, int 
 
     bool foundBound = false;
 
-    cur.left = lowerBound(d, cur.word, cur.left, cur.right, foundBound);
-
     if (cur.word > d[size_d-1]) cur.left = size_d;
-    else cur.right = upperBound(d, cur.word, cur.left, cur.right, cur.word.length());
+    else {
+      cur.left = lowerBound(d, cur.word, cur.left, cur.right, foundBound);
+      cur.right = upperBound(d, cur.word, cur.left, cur.right, cur.word.length());
+    }
 
     if (foundBound) found.push_back(cur.word);
     else if (BinarySearch(d, cur.word, cur.left, cur.right)) found.push_back(cur.word);

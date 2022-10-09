@@ -15,11 +15,11 @@ std::list<std::string> readDictionary() {
 
 int main(int argc, const char* argv[])
 {
-    std::list<std::string> d = readDictionary();
+    //std::list<std::string> d = readDictionary();
 
     std::cout << "Choose implementation:\n\t1. Sorted vector\n\t2. Trie\n\t3. Bloom filter\n\t4. Hash map" << std::endl;
-    int option = 1;
-    //std::cin >> option;
+    int option;
+    std::cin >> option;
 
     SopaSolver* solver = nullptr;
 
@@ -32,8 +32,8 @@ int main(int argc, const char* argv[])
         default: std::cout << "Incorrect option" << std::endl;
     }
 
-    //solver->initSopa(10, {"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
-    solver->initSopa(5, d);
+    solver->initSopa(5, {"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
+    //solver->initSopa(5, d);
     solver->printSopa();
 
     std::list<std::string> found;
