@@ -89,13 +89,7 @@ int main(int argc, const char* argv[])
             std::cout << "Following words found in " << duration.count() << "ms:" << std::endl;
 
             for(const std::string& s : found)
-            {
-                for (int i = 0; i < s.length(); ++i)
-                {
-                    std::cout << (s[i] == 0 ? ' ' : s[i]);
-                }
-                std::cout << ';' << std::endl;
-            }
+                std::cout << s << std::endl;
 
             delete solver;
         }

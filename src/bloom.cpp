@@ -1,8 +1,6 @@
 #include "bloom.hpp"
 #include <cmath>
 
-#include <iostream>
-
 IndependentHash::IndependentHash(size_t k)
 {
     coefs.resize(k);
@@ -60,7 +58,8 @@ void BloomSolver::findWords(std::unordered_set<std::string>& found)
 {
     std::vector<std::vector<bool>> seen;
     seen.resize(sopa.size());
-    std::string res(maxlen, '\0');
+    std::string res;
+    res.reserve(maxlen);
 
     for (int i = 0; i < seen.size(); ++i)
         seen[i].resize(sopa[i].size());
@@ -78,12 +77,7 @@ void BloomSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& se
     if (seen[i][j] || currlen >= maxlen) return;
     seen[i][j] = true;
     curr_hash = (curr_hash * b + sopa[i][j]) % p;
-    res[currlen] = sopa[i][j];
-
-    if (sopa[i][j] == 0)
-    {
-        std::cerr << "wtf " << i << ' ' << j << std::endl;
-    }
+    res.push_back(sopa[i][j]);
 
     if (checkBloom(curr_hash))
         found.insert(res);
@@ -101,7 +95,7 @@ void BloomSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& se
         }
     }
 
-    res[currlen] = '\0';
+    res.pop_back();
     seen[i][j] = false;
 }
 
