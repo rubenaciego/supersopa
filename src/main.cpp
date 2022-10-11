@@ -33,6 +33,7 @@ int main(int argc, const char* argv[])
             words.push_back(w);
 
         std::vector<bool> chosen(words.size());
+        nwords = std::min(nwords, (int)words.size());
 
         std::random_device dev;
         std::mt19937 rng(dev());
