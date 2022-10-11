@@ -36,7 +36,7 @@ void SopaSolver::initSopa(int n, const std::list<std::string>& words)
         while (!putWord(s) && times--);
     }
 
-    std::uniform_int_distribution<std::mt19937::result_type> distChar('A', 'Z');
+    std::uniform_int_distribution<std::mt19937::result_type> distChar('a', 'z');
 
     for (int i = 0; i < n; ++i)
     {
