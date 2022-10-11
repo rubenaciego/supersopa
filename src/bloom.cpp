@@ -1,6 +1,8 @@
 #include "bloom.hpp"
 #include <cmath>
 
+#include <iostream>
+
 IndependentHash::IndependentHash(size_t k)
 {
     coefs.resize(k);
@@ -33,10 +35,12 @@ uint64_t IndependentHash::operator()(uint64_t x) const noexcept
 void BloomSolver::initWords(const std::list<std::string>& words)
 {
     // https://www.geeksforgeeks.org/bloom-filters-introduction-and-python-implementation/
-    const double desiredP = 1e-16;
+    const double desiredP = 1e-5;
     uint64_t n = words.size();
-    uint64_t m = (uint64_t)(-(double)n * log(desiredP)/(log(2)*log(2)));
-    uint64_t k = (uint64_t)((double)m / (double)n * log(2));
+    uint64_t m = 10000 * words.size();//(uint64_t)(-(double)n * log(desiredP)/(log(2)*log(2)));
+    uint64_t k = 8;//(uint64_t)((double)m / (double)n * log(2));
+
+    std::cerr << "Bloom filter: m = " << m << ", k = " << k << std::endl;
 
     hashes.reserve(k);
 

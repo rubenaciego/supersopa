@@ -26,6 +26,11 @@ void SopaSolver::initSopa(int n)
     }
 }
 
+void SopaSolver::initSopa(const std::vector<std::vector<char>>& sopa)
+{
+    this->sopa = sopa;
+}
+
 void SopaSolver::initSopa(int n, const std::list<std::string>& words)
 {
     initSopaEmpty(n);
@@ -46,7 +51,11 @@ void SopaSolver::initSopa(int n, const std::list<std::string>& words)
                 sopa[i][j] = distChar(rng);
         }
     }
-    initWords(words);
+}
+
+std::vector<std::vector<char>> SopaSolver::getSopa() const
+{
+    return sopa;
 }
 
 bool SopaSolver::putWord(const std::string& word)
