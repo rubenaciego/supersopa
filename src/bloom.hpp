@@ -7,7 +7,7 @@ class IndependentHash
 {
 public:
     IndependentHash(uint64_t k);
-    uint64_t operator()(uint64_t x) const noexcept;
+    uint64_t operator()(uint64_t x) const;
 
 private:
     const uint64_t p = (1LL << 61) - 1;
@@ -24,6 +24,7 @@ private:
     std::vector<IndependentHash> hashes;
     std::vector<bool> bitset;
     uint64_t maxlen;
+    uint64_t minlen;
 
     // Rolling hash
     const uint64_t p = (1LL << 61) - 1;

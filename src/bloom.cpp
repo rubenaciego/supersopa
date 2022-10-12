@@ -22,7 +22,7 @@ IndependentHash::IndependentHash(size_t k)
     } while (!nonzero);   
 }
 
-uint64_t IndependentHash::operator()(uint64_t x) const noexcept
+uint64_t IndependentHash::operator()(uint64_t x) const
 {
     uint64_t res = 0;
 
@@ -49,10 +49,12 @@ void BloomSolver::initWords(const std::list<std::string>& words)
 
     bitset.resize(m);
     maxlen = 0;
+    minlen = UINT64_MAX;
 
     for (const std::string& s : words)
     {
         maxlen = std::max(maxlen, s.length());
+        minlen = std::min(minlen, s.length());
         uint64_t hash = rollingHash(s);
         addBloom(hash);
     }
@@ -83,7 +85,7 @@ void BloomSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& se
     curr_hash = (curr_hash * b + sopa[i][j]) % p;
     res.push_back(sopa[i][j]);
 
-    if (checkBloom(curr_hash))
+    if (currlen >= minlen && checkBloom(curr_hash))
         found.insert(res);
 
     for (int di = -1; di <= 1; ++di)
