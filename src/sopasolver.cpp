@@ -26,6 +26,11 @@ void SopaSolver::initSopa(int n)
     }
 }
 
+void SopaSolver::initSopa(const std::vector<std::vector<char>>& sopa)
+{
+    this->sopa = sopa;
+}
+
 void SopaSolver::initSopa(int n, const std::list<std::string>& words)
 {
     initSopaEmpty(n);
@@ -36,7 +41,7 @@ void SopaSolver::initSopa(int n, const std::list<std::string>& words)
         while (!putWord(s) && times--);
     }
 
-    std::uniform_int_distribution<std::mt19937::result_type> distChar('A', 'Z');
+    std::uniform_int_distribution<std::mt19937::result_type> distChar('a', 'z');
 
     for (int i = 0; i < n; ++i)
     {
@@ -46,7 +51,11 @@ void SopaSolver::initSopa(int n, const std::list<std::string>& words)
                 sopa[i][j] = distChar(rng);
         }
     }
-    initWords(words);
+}
+
+std::vector<std::vector<char>> SopaSolver::getSopa() const
+{
+    return sopa;
 }
 
 bool SopaSolver::putWord(const std::string& word)

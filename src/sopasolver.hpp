@@ -13,8 +13,11 @@ public:
 
     void initSopa(int n);
     void initSopa(int n, const std::list<std::string>& words);
+    void initSopa(const std::vector<std::vector<char>>& sopa);
 
     void printSopa() const;
+
+    std::vector<std::vector<char>> getSopa() const;
 
     virtual void initWords(const std::list<std::string>& words) = 0;
     virtual void findWords(std::unordered_set<std::string>& found) = 0;
