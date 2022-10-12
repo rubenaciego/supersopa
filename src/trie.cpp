@@ -16,6 +16,7 @@ void TrieSolver::findWords(std::unordered_set<std::string>& found)
 {
     std::vector<std::vector<bool>> seen (sopa.size(), std::vector<bool> (sopa[0].size(), false));
     std::string res(maxLength, '\0');
+    lettersVisited = totalOperations = 0;
     
     for (int i = 0; i < sopa.size(); ++i) {
         for (int j = 0; j < sopa[i].size(); ++j) {
@@ -30,28 +31,10 @@ void TrieSolver::initTST(int l, int r, const std::vector<std::string>& sortedWor
 {
         if (l <= r) {
             int mid = (l+r)/2;
-            insertWord(sortedWords[mid], 0, &root);
+            insertWord(&root, sortedWords[mid]);
             initTST(l, mid-1, sortedWords);
             initTST(mid+1, r, sortedWords);
         }
-}
-
-void TrieSolver::insertWord(std::string word, int i, TST** node) {
-    if (*node == NULL) {
-        *node = new TST();
-        (*node)->letter = word[i];
-        (*node)->isEndOfWord = 0;
-    }
-    if (word[i] < (*node)->letter)
-        insertWord(word, i, &((*node)->lowKid));
-    else if (word[i] > (*node)->letter)
-        insertWord(word, i, &((*node)->highKid));
-    else {
-        if (i == (int)word.length()-1)
-            (*node)->isEndOfWord = 1;
-        else
-            insertWord(word, i+1, &((*node)->equalKid));
-    }
 }
 
 TST* TrieSolver::newNode(char c, int endOfWord) {
@@ -63,42 +46,33 @@ TST* TrieSolver::newNode(char c, int endOfWord) {
 }
 
 // Insert iteratively a certain word
-/*void TrieSolver::insertWord(std::string word) {
+void TrieSolver::insertWord(TST** node, const std::string& word) {
     int i = 0;
-    TST *currNode = root, *parent = NULL;
     while (i < (int)word.length()) {
-        while (currNode != NULL) {
-            parent = currNode;
-            if (word[i] < currNode->letter)
-                currNode = currNode->lowKid;
-            else if (word[i] > currNode->letter)
-                currNode = currNode->highKid;
-            else
-                currNode = currNode->equalKid;
+        if (*node == NULL) {
+            *node = newNode(word[i], 0);
         }
-        if (parent == NULL) {
-            if (i == (int)word.length()-1) parent = newNode(word[i], 1);
-            else parent = newNode(word[i], 0);
-            currNode = parent;
-        } else if (word[i] < parent->letter) {
-            parent->lowKid = newNode(word[i], 0);
-            currNode = parent->lowKid;
-        } else if (word[i] > parent->letter) {
-            parent->highKid = newNode(word[i], 0);
-            currNode = parent->highKid;
-        } else {
-            if (i == (int)word.length()-1) parent->equalKid = newNode(word[i], 1);
-            else parent->equalKid = newNode(word[i], 0);
-            currNode = parent->equalKid;
+        if (i+1 == (int)word.length()) {
+            (*node)->isEndOfWord = 1;
+            return;
         }
-        ++i;
+        
+        if (word[i] < (*node)->letter)
+            node = &((*node)->lowKid);
+        else if (word[i] > (*node)->letter)
+            node = &((*node)->highKid);
+        else {
+            node = &((*node)->equalKid);
+            ++i;
+        }
     }
-}*/
+}
 
 // Searching iteratively for the next letter found in the letters soup
 TST* TrieSolver::searchNextLetter(char c, TST* currentNode) {
     TST* auxNode = currentNode;
     while (auxNode != NULL) {
+        ++totalOperations;
         if (c < auxNode->letter)
             auxNode = auxNode->lowKid;
         else if (c > auxNode->letter)
@@ -111,6 +85,7 @@ TST* TrieSolver::searchNextLetter(char c, TST* currentNode) {
 
 void TrieSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& seen, TST* currentNode,
                                size_t currLength, std::string& res, std::unordered_set<std::string>& found) {
+    ++lettersVisited;
     if (seen[i][j] or currLength >= maxLength) return;
     TST* nextNode = searchNextLetter(sopa[i][j], currentNode);
     if (nextNode == NULL) return;

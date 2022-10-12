@@ -171,9 +171,12 @@ int main(int argc, const char* argv[])
             solver->findWords(found);
             auto t2 = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
-
+            auto metrics = solver->getMetrics();
+            
+            std::cout << "Total number of letters visited: " << metrics.first << std::endl;
+            std::cout << "Total number of operations: " << metrics.second << std::endl;
             std::cout << "Following words found in " << duration.count() << "ms:" << std::endl;
-
+            
             for(const std::string& s : found)
                 std::cout << s << std::endl;
 
