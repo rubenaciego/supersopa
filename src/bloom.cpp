@@ -27,7 +27,7 @@ uint64_t IndependentHash::operator()(uint64_t x) const noexcept
     uint64_t res = 0;
 
     for (int i = coefs.size() - 1; i >= 0; --i)
-        res =(res * x + coefs[i]) % p;
+        res = (res * x + coefs[i]) % p;
 
     return res;
 }
@@ -37,8 +37,8 @@ void BloomSolver::initWords(const std::list<std::string>& words)
     // https://www.geeksforgeeks.org/bloom-filters-introduction-and-python-implementation/
     const double desiredP = 1e-5;
     uint64_t n = words.size();
-    uint64_t m = 10000 * words.size();//(uint64_t)(-(double)n * log(desiredP)/(log(2)*log(2)));
-    uint64_t k = 4;//(uint64_t)((double)m / (double)n * log(2));
+    uint64_t m = 1000 * n * n;//(uint64_t)(-(double)n * log(desiredP)/(log(2)*log(2)));
+    uint64_t k = 2;//(uint64_t)((double)m / (double)n * log(2));
 
     std::cerr << "Bloom filter: m = " << m << ", k = " << k << std::endl;
 

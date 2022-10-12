@@ -27,10 +27,14 @@ int main(int argc, const char* argv[])
         dict.open(argv[1]);
 
         std::vector<std::string> words;
+        std::list<std::string> wordlist;
         std::string w;
 
         while (dict >> w)
+        {
             words.push_back(w);
+            wordlist.push_back(w);
+        }
 
         std::vector<bool> chosen(words.size());
         nwords = std::min(nwords, (int)words.size());
@@ -55,6 +59,8 @@ int main(int argc, const char* argv[])
             finalwords.push_back(words[p]);
         }
 
+        words.clear();
+
         for (int i = 0; i < t; ++i)
         {
             SortedVecSolver svec;
@@ -69,10 +75,10 @@ int main(int argc, const char* argv[])
             bloom.initSopa(svec.getSopa());
             hash.initSopa(svec.getSopa());
 
-            svec.initWords(finalwords);
-            trie.initWords(finalwords);
-            bloom.initWords(finalwords);
-            hash.initWords(finalwords);
+            svec.initWords(wordlist);
+            trie.initWords(wordlist);
+            bloom.initWords(wordlist);
+            hash.initWords(wordlist);
 
             std::cout << "SuperSopa de mida " << n << std::endl;
             svec.printSopa();
@@ -99,10 +105,10 @@ int main(int argc, const char* argv[])
             t2 = std::chrono::high_resolution_clock::now();
             auto hashdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
-            std::cout << "Sorted vector: " << vecdur.count() << std::endl
-                << "Trie: " << triedur.count() << std::endl
-                << "Bloom filter: " << bloomdur.count() << std::endl
-                << "Hashmap: " << hashdur.count() << std::endl;
+            std::cout << "Sorted vector: " << vecdur.count() << "ms" << std::endl
+                << "Trie: " << triedur.count() << "ms" << std::endl
+                << "Bloom filter: " << bloomdur.count() << "ms" << std::endl
+                << "Hashmap: " << hashdur.count() << "ms" << std::endl;
 
             
             std::cout << "Bloom filter false positives: " << fbloom.size() - fvec.size() << std::endl;
