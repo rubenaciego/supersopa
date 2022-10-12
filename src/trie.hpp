@@ -24,8 +24,7 @@ private:
     
     void initTST(int l, int r, const std::vector<std::string>& words);
     TST* newNode(char c, int endOfWord);
-    void insertWord(TST** node, const std::string& word);
-    //void insertWord(const std::string word, int i, TST** node);
+    void insertWord(const std::string& word, int i, TST** node);
     TST* searchNextLetter(char c, TST* node);
     
     void findWordsFrom(int i, int j, std::vector<std::vector<bool>>& seen, TST* currentNode, 
