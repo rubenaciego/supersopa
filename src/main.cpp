@@ -41,7 +41,7 @@ int main(int argc, const char* argv[])
     solver->printSopa();
     std::cout << std::endl;
 
-    solver->initWords({"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
+    //solver->initWords({"HELLO", "TEST", "RUBEN", "PIFA", "JOFRE", "MARIONA"});
 
     std::unordered_set<std::string> found;
     auto t1 = std::chrono::high_resolution_clock::now();
