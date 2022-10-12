@@ -2,13 +2,10 @@
 
 void TrieSolver::initWords(const std::list<std::string>& words)
 {
-    std::vector<std::string> sortedWords((int)words.size());
-    int i = 0;
-    for (const std::string& word : words) {
-        sortedWords[i] = word;
+    std::vector<std::string> sortedWords = {words.begin(), words.end()};
+    maxLength = 0;
+    for (const std::string& word : sortedWords)
         maxLength = std::max(maxLength, word.length());
-        ++i;
-    }
     
     std::sort(sortedWords.begin(), sortedWords.end());
     root = NULL;
