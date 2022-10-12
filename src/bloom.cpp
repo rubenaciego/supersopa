@@ -1,6 +1,6 @@
 #include "bloom.hpp"
 #include <cmath>
-
+#include <limits>
 #include <iostream>
 
 IndependentHash::IndependentHash(size_t k)
@@ -34,11 +34,10 @@ uint64_t IndependentHash::operator()(uint64_t x) const
 
 void BloomSolver::initWords(const std::list<std::string>& words)
 {
-    // https://www.geeksforgeeks.org/bloom-filters-introduction-and-python-implementation/
-    const double desiredP = 1e-5;
+    const double desiredP = 1e-16;
     uint64_t n = words.size();
-    uint64_t m = 1000 * n * n;//(uint64_t)(-(double)n * log(desiredP)/(log(2)*log(2)));
-    uint64_t k = 2;//(uint64_t)((double)m / (double)n * log(2));
+    uint64_t k = (uint64_t)(-log2(desiredP));
+    uint64_t m = (uint64_t)(-(double)n * log(desiredP)/(log(2)*log(2)));
 
     std::cerr << "Bloom filter: m = " << m << ", k = " << k << std::endl;
 
@@ -49,7 +48,7 @@ void BloomSolver::initWords(const std::list<std::string>& words)
 
     bitset.resize(m);
     maxlen = 0;
-    minlen = UINT64_MAX;
+    minlen = std::numeric_limits<uint64_t>::max();
 
     for (const std::string& s : words)
     {
@@ -85,7 +84,7 @@ void BloomSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& se
     curr_hash = (curr_hash * b + sopa[i][j]) % p;
     res.push_back(sopa[i][j]);
 
-    if (currlen >= minlen && checkBloom(curr_hash))
+    if (currlen + 1 >= minlen && checkBloom(curr_hash))
         found.insert(res);
 
     for (int di = -1; di <= 1; ++di)

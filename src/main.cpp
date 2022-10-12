@@ -111,7 +111,7 @@ int main(int argc, const char* argv[])
                 << "Hashmap: " << hashdur.count() << "ms" << std::endl;
 
             
-            std::cout << "Bloom filter false positives: " << fbloom.size() - fvec.size() << std::endl;
+            std::cout << "Bloom filter false positives: " << (int)fbloom.size() - (int)fvec.size() << std::endl;
             std::cout << std::endl;
 
             std::cerr << "Found words:" << std::endl;
