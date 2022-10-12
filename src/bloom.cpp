@@ -121,11 +121,12 @@ void BloomSolver::addBloom(uint64_t val)
         bitset[hashes[i](val) % bitset.size()] = true;
 }
 
-bool BloomSolver::checkBloom(uint64_t val) const
+bool BloomSolver::checkBloom(uint64_t val)
 {
     for (int i = 0; i < hashes.size(); ++i)
     {
         uint64_t index = hashes[i](val) % bitset.size();
+        totalOperations += hashes.size();
         if (!bitset[index]) return false;
     }
 

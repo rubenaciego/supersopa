@@ -32,7 +32,7 @@ private:
 
     uint64_t rollingHash(const std::string& s) const;
     void addBloom(uint64_t val);
-    bool checkBloom(uint64_t val) const;
+    bool checkBloom(uint64_t val);
 
     void findWordsFrom(int i, int j, std::vector<std::vector<bool>>& seen, uint64_t curr_hash,
         size_t currlen, std::string& res, std::unordered_set<std::string>& found);
