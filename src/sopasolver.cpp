@@ -132,3 +132,7 @@ void SopaSolver::printSopa() const
         std::cout << std::endl;
     }
 }
+
+std::pair<uint64_t, uint64_t> SopaSolver::getMetrics() {
+    return {lettersVisited, totalOperations};
+}

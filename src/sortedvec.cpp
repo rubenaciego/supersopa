@@ -20,27 +20,29 @@ bool posValid(int i, int j, int n) {
     return ((i >= 0) && (i < n) && (j >= 0) && (j < n));
 }
 
-bool BinarySearch(const std::vector<std::string>& v, const std::string& word, int l, int r) {
+bool SortedVecSolver::binarySearch(const std::vector<std::string>& v, const std::string& word, int l, int r) {
     if (l > r) return false;
 
-    int mid;
-    mid = (l + r)/2;
+    ++totalOperations;
+    int mid = (l + r)/2;
 
     if(v[mid] == word) return true;
-    else if(v[mid] > word) return BinarySearch(v, word, l, mid-1);
-    else return BinarySearch(v, word, mid+1, r);
+    else if(v[mid] > word) return binarySearch(v, word, l, mid-1);
+    else return binarySearch(v, word, mid+1, r);
 }
 
-int lowerBound(const std::vector<std::string>& v, const std::string& word, int l, int r, bool& found) {
+int SortedVecSolver::lowerBound(const std::vector<std::string>& v, const std::string& word, int l, int r, bool& found) {
     if (l >= r) return r;
+    ++totalOperations;
     int mid = (l+r)/2;
     if (v[mid] == word) found = true;
     if (v[mid] < word) return lowerBound(v, word, mid+1, r, found);
     else return lowerBound(v, word, l, mid, found);
 }
 
-int upperBound(const std::vector<std::string>& v, const std::string& word, int l, int r, int size) {
+int SortedVecSolver::upperBound(const std::vector<std::string>& v, const std::string& word, int l, int r, int size) {
     if (l >= r) return r;
+    ++totalOperations;
     int mid = (l+r)/2;
     if(v[mid].substr(0, size) <= word) return upperBound(v, word, mid+1, r, size);
     else return upperBound(v, word, l, mid, size);
@@ -50,6 +52,7 @@ void SortedVecSolver::search(int i, int j, std::unordered_set<std::string>& foun
     std::string& word, int left, int right, std::vector<std::vector<bool>>& visited)
 {
     if (visited[i][j] || len >= max_length || left > right) return;
+    ++lettersVisited;
     visited[i][j] = true;
     word.push_back(sopa[i][j]);
     int n = sopa.size();
@@ -62,7 +65,7 @@ void SortedVecSolver::search(int i, int j, std::unordered_set<std::string>& foun
         right = upperBound(d, word, left, right, len);
     }
 
-    if (foundBound || BinarySearch(d, word, left, right)) found.insert(word);
+    if (foundBound || binarySearch(d, word, left, right)) found.insert(word);
 
     for (int di = -1; di <= 1; ++di)
     {
@@ -81,6 +84,7 @@ void SortedVecSolver::search(int i, int j, std::unordered_set<std::string>& foun
 void SortedVecSolver::findWords(std::unordered_set<std::string>& found) {
     int n = sopa.size();
     int total_iters = 0;
+    lettersVisited = totalOperations = 0;
 
     std::vector<std::vector<bool>> visited(n);
     std::string res;

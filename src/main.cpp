@@ -2,6 +2,7 @@
 #include <fstream>
 #include <chrono>
 #include <random>
+#include <cassert>
 
 #include "sortedvec.hpp"
 #include "trie.hpp"
@@ -110,16 +111,54 @@ int main(int argc, const char* argv[])
                 << "Bloom filter: " << bloomdur.count() << "ms" << std::endl
                 << "Hashmap: " << hashdur.count() << "ms" << std::endl;
 
+            std::cout << "Sorted vector operations: visited = " << svec.getMetrics().first << ", total = " << svec.getMetrics().second << std::endl
+                << "Trie operations: visited = " << trie.getMetrics().first << ", total = " << trie.getMetrics().second << std::endl
+                << "Bloom filter operations: visited = " << bloom.getMetrics().first << ", total = " << bloom.getMetrics().second << std::endl
+                << "Hashmap operations: visited = " << hash.getMetrics().first << ", total = " << hash.getMetrics().second << std::endl;
+
             
             std::cout << "Bloom filter false positives: " << (int)fbloom.size() - (int)fvec.size() << std::endl;
             std::cout << std::endl;
 
-            std::cerr << "Found words:" << std::endl;
+            if (fvec != ftrie)
+            {
+                std::cerr << "Error between sorted vector and trie implementations!" << std::endl
+                    << "Present in vector and not in trie:" << std::endl;
 
-            for (const std::string& s : fvec)
-                std::cerr << s << std::endl;
+                for (const std::string& s : fvec)
+                {
+                    if (!ftrie.count(s))
+                        std::cerr << s << std::endl;
+                }
 
-            std::cerr << std::endl;
+                std::cerr << "Present in trie and not in vector:" << std::endl;
+
+                for (const std::string& s : ftrie)
+                {
+                    if (!fvec.count(s))
+                        std::cerr << s << std::endl;
+                }
+            }
+
+            if (fvec != fbloom)
+            {
+                std::cerr << "Difference between sorted vector and bloom filter implementations!" << std::endl
+                    << "Present in vector and not in bloom:" << std::endl;
+
+                for (const std::string& s : fvec)
+                {
+                    if (!fbloom.count(s))
+                        std::cerr << s << std::endl;
+                }
+
+                std::cerr << "Present in bloom and not in vector:" << std::endl;
+
+                for (const std::string& s : fbloom)
+                {
+                    if (!fvec.count(s))
+                        std::cerr << s << std::endl;
+                }
+            }
         }
 
         return 0;
@@ -177,9 +216,12 @@ int main(int argc, const char* argv[])
             solver->findWords(found);
             auto t2 = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
-
+            auto metrics = solver->getMetrics();
+            
+            std::cout << "Total number of letters visited: " << metrics.first << std::endl;
+            std::cout << "Total number of operations: " << metrics.second << std::endl;
             std::cout << "Following words found in " << duration.count() << "ms:" << std::endl;
-
+            
             for(const std::string& s : found)
                 std::cout << s << std::endl;
 

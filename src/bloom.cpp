@@ -65,6 +65,7 @@ void BloomSolver::findWords(std::unordered_set<std::string>& found)
     seen.resize(sopa.size());
     std::string res;
     res.reserve(maxlen);
+    lettersVisited = totalOperations = 0;
 
     for (int i = 0; i < seen.size(); ++i)
         seen[i].resize(sopa[i].size());
@@ -80,6 +81,7 @@ void BloomSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& se
         size_t currlen, std::string& res, std::unordered_set<std::string>& found)
 {
     if (seen[i][j] || currlen >= maxlen) return;
+    ++lettersVisited;
     seen[i][j] = true;
     curr_hash = (curr_hash * b + sopa[i][j]) % p;
     res.push_back(sopa[i][j]);
@@ -119,11 +121,12 @@ void BloomSolver::addBloom(uint64_t val)
         bitset[hashes[i](val) % bitset.size()] = true;
 }
 
-bool BloomSolver::checkBloom(uint64_t val) const
+bool BloomSolver::checkBloom(uint64_t val)
 {
     for (int i = 0; i < hashes.size(); ++i)
     {
         uint64_t index = hashes[i](val) % bitset.size();
+        totalOperations += hashes.size();
         if (!bitset[index]) return false;
     }
 
