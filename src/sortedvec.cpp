@@ -51,8 +51,8 @@ int SortedVecSolver::upperBound(const std::vector<std::string>& v, const std::st
 void SortedVecSolver::search(int i, int j, std::unordered_set<std::string>& found, int len,
     std::string& word, int left, int right, std::vector<std::vector<bool>>& visited)
 {
-    ++lettersVisited;
     if (visited[i][j] || len >= max_length || left > right) return;
+    ++lettersVisited;
     visited[i][j] = true;
     word.push_back(sopa[i][j]);
     int n = sopa.size();

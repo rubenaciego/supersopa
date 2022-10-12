@@ -80,8 +80,8 @@ void BloomSolver::findWords(std::unordered_set<std::string>& found)
 void BloomSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& seen, uint64_t curr_hash,
         size_t currlen, std::string& res, std::unordered_set<std::string>& found)
 {
-    ++lettersVisited;
     if (seen[i][j] || currlen >= maxlen) return;
+    ++lettersVisited;
     seen[i][j] = true;
     curr_hash = (curr_hash * b + sopa[i][j]) % p;
     res.push_back(sopa[i][j]);

@@ -80,8 +80,8 @@ TST* TrieSolver::searchNextLetter(char c, TST* currentNode) {
 
 void TrieSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& seen, TST* currentNode,
                                size_t currLength, std::string& res, std::unordered_set<std::string>& found) {
-    ++lettersVisited;
     if (seen[i][j] or currLength >= maxLength) return;
+    ++lettersVisited;
     TST* nextNode = searchNextLetter(sopa[i][j], currentNode);
     if (nextNode == nullptr) return;
     seen[i][j] = true;
