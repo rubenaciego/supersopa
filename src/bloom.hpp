@@ -18,6 +18,7 @@ class BloomSolver : public SopaSolver
 {
 public:
     BloomSolver(double colProb);
+    BloomSolver(uint64_t bitfactor, uint64_t k);
     virtual void initWords(const std::list<std::string>& words) override;
     virtual void findWords(std::unordered_set<std::string>& found) override;
 
@@ -28,6 +29,8 @@ private:
     uint64_t maxlen;
     uint64_t minlen;
     double desiredP;
+    uint64_t bitfactor;
+    uint64_t k;
 
     // Rolling hash
     const uint64_t p = (1LL << 61) - 1;

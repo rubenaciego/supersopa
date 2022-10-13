@@ -37,11 +37,26 @@ BloomSolver::BloomSolver(double colProb) : SopaSolver()
     desiredP = colProb;
 }
 
+BloomSolver::BloomSolver(uint64_t bitfactor, uint64_t k) : SopaSolver()
+{
+    desiredP = -1.0;
+    this->bitfactor = bitfactor;
+    this->k = k;
+}
+
 void BloomSolver::initWords(const std::list<std::string>& words)
 {
     uint64_t n = words.size();
-    uint64_t k = (uint64_t)(-log2(desiredP));
-    uint64_t m = (uint64_t)(-(double)n * log(desiredP)/(log(2)*log(2)));
+    uint64_t m;
+
+    if (desiredP >= 0.0)
+    {
+        k = (uint64_t)(-log2(desiredP));
+        m = (uint64_t)(-(double)n * log(desiredP)/(log(2)*log(2)));
+    }
+    else
+        m = n * bitfactor;
+
 
     std::cerr << "Bloom filter: m = " << m << ", k = " << k << std::endl;
 
@@ -65,8 +80,12 @@ void BloomSolver::initWords(const std::list<std::string>& words)
         addBloom(hash, bitset);
     }
 
-    uint64_t mprefix = (uint64_t)(-(double)nprefixes * log(desiredP)/(log(2)*log(2))
-    );
+    uint64_t mprefix;
+    if (desiredP >= 0.0)
+        mprefix = (uint64_t)(-(double)nprefixes * log(desiredP)/(log(2)*log(2)));
+    else
+        mprefix = nprefixes * bitfactor;
+        
     prefixes.resize(mprefix);
 
     for (const std::string& s : words)
@@ -87,16 +106,11 @@ void BloomSolver::findWords(std::unordered_set<std::string>& found)
     res.reserve(maxlen);
     lettersVisited = totalOperations = 0;
 
-    int numOfPos = sopa.size()*sopa[0].size(), posDone = 0;
-    std::cerr << "Starting search with BloomSolver" << std::endl;
     for (int i = 0; i < sopa.size(); ++i)
     {
         for (int j = 0; j < sopa[i].size(); ++j)
         {
             findWordsFrom(i, j, seen, 0, 0, res, found);
-            ++posDone;
-            std::cerr << (double)posDone*100.0/(double)numOfPos << "%" <<
-            std::endl;
         }
     }
 }

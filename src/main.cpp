@@ -68,7 +68,7 @@ int main(int argc, const char* argv[])
         {
             SortedVecSolver svec;
             TrieSolver trie;
-            BloomSolver bloom(bloomp);
+            BloomSolver bloom(10000, 3);
             HashMapSolver hash;
 
             int n = sopasize(rng);
@@ -88,21 +88,25 @@ int main(int argc, const char* argv[])
 
             std::unordered_set<std::string> fvec, ftrie, fbloom, fhash;
 
+            std::cerr << "Starting trie..." << std::endl;
             auto t1 = std::chrono::high_resolution_clock::now();
             trie.findWords(ftrie);
             auto t2 = std::chrono::high_resolution_clock::now();
             auto triedur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
+            std::cerr << "Starting bloom filter..." << std::endl;
             t1 = std::chrono::high_resolution_clock::now();
             bloom.findWords(fbloom);
             t2 = std::chrono::high_resolution_clock::now();
             auto bloomdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
+            std::cerr << "Starting hash map..." << std::endl;
             t1 = std::chrono::high_resolution_clock::now();
             hash.findWords(fhash);
             t2 = std::chrono::high_resolution_clock::now();
             auto hashdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
+            std::cerr << "Starting vector..." << std::endl;
             t1 = std::chrono::high_resolution_clock::now();
             svec.findWords(fvec);
             t2 = std::chrono::high_resolution_clock::now();
