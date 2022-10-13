@@ -201,6 +201,7 @@ bool BloomSolver::checkBloom(uint64_t val, std::vector<bool>& v)
     {
         for (int i = 0; i < murmurseeds.size(); ++i)
         {
+            ++totalOperations;
             uint64_t hash[2];
             MurmurHash3_x64_128(&val, sizeof(val), murmurseeds[i], hash);
             if (!v[hash[0] % bitset.size()] || !v[hash[1] % bitset.size()])
