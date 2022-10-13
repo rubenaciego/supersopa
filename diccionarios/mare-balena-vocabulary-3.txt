@@ -2441,7 +2441,7 @@ greixos
 greu
 grifolar
 grill
-grillâ
+grilla
 grillara
 grillat
 groc
@@ -3535,7 +3535,7 @@ perpetua
 perpetuava
 perplex
 perque
-perseguidô
+perseguido
 perseguint
 persiana
 persigni
