@@ -6,7 +6,7 @@
 void DoubleHash::initDoubleHash(int n)
 {
     collisions = 0;
-    hashTableSize = 2*n;
+    hashTableSize = 100*n;
     hashTable.resize(hashTableSize, "");
     bitsetSieveOfEratosthenes.resize(hashTableSize,true);
     sieveOfEratosthenes();
@@ -64,11 +64,19 @@ uint64_t DoubleHash::updateRollingHash2(uint64_t currhash, uint64_t next) const
 void DoubleHash::addWord(const std::string& s)
 {
     uint64_t hashValue = rollingHash1(s) % hashTableSize;
+    uint64_t initialHash = hashValue;
     uint64_t hashOffset = toHashOffset(rollingHash2(s));
 
     while(hashTable[hashValue] != "") {
         ++collisions;
         hashValue = (hashValue + hashOffset)%hashTableSize;
+
+        if (hashValue == initialHash)
+        {
+            std::cerr << "Error building the hash table! Choose a bigger load factor"
+                << std::endl;
+            return;
+        }
     }
 
     hashTable[hashValue] = s;
@@ -112,8 +120,8 @@ void HashMapSolver::initWords(const std::list<std::string>& words) {
     for (const std::string& s : words)
     {
         nprefixes += s.length();
-        maxlen = std::max(maxlen, s.length());
-        minlen = std::min(minlen, s.length());
+        maxlen = std::max(maxlen, (uint64_t) s.length());
+        minlen = std::min(minlen, (uint64_t) s.length());
         doubleHash.addWord(s);
     }
 
@@ -139,15 +147,9 @@ void HashMapSolver::findWords(std::unordered_set<std::string>& found)
     res.reserve(maxlen);
     lettersVisited = totalOperations = 0;
 
-    int numOfPos = sopa.size()*sopa[0].size(), posDone = 0;
-    std::cerr << "Starting search with HashMapSolver" << std::endl;
-    for (int i = 0; i < sopa.size(); ++i)
-    {
+    for (int i = 0; i < sopa.size(); ++i) {
         for (int j = 0; j < sopa[i].size(); ++j) {
             findWordsFrom(i, j, seen, 0, 0, 0, res, found);
-            ++posDone;
-            std::cerr << (double)posDone*100.0/(double)numOfPos << "%" <<
-            std::endl;
         }
     }
 }

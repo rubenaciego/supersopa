@@ -17,7 +17,7 @@ int main(int argc, const char* argv[])
         return 1;
     }
 
-    const double bloomp = 1e-8;
+    const double bloomp = 1e-7;
 
     if (argc == 6)
     {
@@ -68,7 +68,7 @@ int main(int argc, const char* argv[])
         {
             SortedVecSolver svec;
             TrieSolver trie;
-            BloomSolver bloom(bloomp);
+            BloomSolver bloom(10000, 3);
             HashMapSolver hash;
 
             int n = sopasize(rng);
@@ -88,21 +88,25 @@ int main(int argc, const char* argv[])
 
             std::unordered_set<std::string> fvec, ftrie, fbloom, fhash;
 
+            std::cerr << "Starting trie..." << std::endl;
             auto t1 = std::chrono::high_resolution_clock::now();
             trie.findWords(ftrie);
             auto t2 = std::chrono::high_resolution_clock::now();
             auto triedur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
+            std::cerr << "Starting bloom filter..." << std::endl;
             t1 = std::chrono::high_resolution_clock::now();
             bloom.findWords(fbloom);
             t2 = std::chrono::high_resolution_clock::now();
             auto bloomdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
+            std::cerr << "Starting hash map..." << std::endl;
             t1 = std::chrono::high_resolution_clock::now();
             hash.findWords(fhash);
             t2 = std::chrono::high_resolution_clock::now();
             auto hashdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
+            std::cerr << "Starting vector..." << std::endl;
             t1 = std::chrono::high_resolution_clock::now();
             svec.findWords(fvec);
             t2 = std::chrono::high_resolution_clock::now();
@@ -118,7 +122,7 @@ int main(int argc, const char* argv[])
                 << "Bloom filter operations: visited = " << bloom.getMetrics().first << ", total = " << bloom.getMetrics().second << std::endl
                 << "Hashmap operations: visited = " << hash.getMetrics().first << ", total = " << hash.getMetrics().second << std::endl;
 
-            
+
             std::cout << "Bloom filter false positives: " << (int)fbloom.size() - (int)fvec.size() << std::endl;
             std::cout << std::endl;
 
@@ -239,15 +243,15 @@ int main(int argc, const char* argv[])
             auto t2 = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
             auto metrics = solver->getMetrics();
-            
+
             std::cout << "Total number of letters visited: " << metrics.first << std::endl;
             std::cout << "Total number of operations: " << metrics.second << std::endl;
             std::cout << "Following words found in " << duration.count() << "ms:" << std::endl;
-            
+
             for(const std::string& s : found)
                 std::cout << s << std::endl;
 
-            delete solver;
+            //delete solver;
         }
 
         std::cout << "Choose implementation:\n\t1. Sorted vector\n\t2. Trie\n\t3. Bloom filter\n\t4. Hash map" << std::endl;
