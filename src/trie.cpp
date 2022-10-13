@@ -18,14 +18,10 @@ void TrieSolver::findWords(std::unordered_set<std::string>& found)
     std::string res;
     res.reserve(maxLength);
     lettersVisited = totalOperations = 0;
-    
-    int numOfPos = sopa.size()*sopa[0].size(), posDone = 0;
-    std::cout << "Starting search with TrieSolver" << std::endl;
+
     for (int i = 0; i < sopa.size(); ++i) {
         for (int j = 0; j < sopa[i].size(); ++j) {
             findWordsFrom(i, j, seen, root, 0, res, found);
-            ++posDone;
-            std::cout << (double)posDone*100.0/(double)numOfPos << "%" << std::endl;
         }
     }
 }

@@ -91,12 +91,13 @@ void SortedVecSolver::findWords(std::unordered_set<std::string>& found) {
     res.reserve(max_length);
     
     int numOfPos = n*n, posDone = 0;
-    std::cout << "Starting search with SortedVecSolver" << std::endl;
+    std::cerr << "Starting search with SortedVecSolver" << std::endl;
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             search(i, j, found, 0, res, 0, size_d - 1, visited);
             ++posDone;
-            std::cout << (double)posDone*100.0/(double)numOfPos << "%" << std::endl;
+            std::cerr << (double)posDone*100.0/(double)numOfPos << "%" <<
+            std::endl;
         }
     }
 }

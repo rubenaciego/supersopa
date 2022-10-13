@@ -5,7 +5,8 @@
 
 void DoubleHash::initDoubleHash(int n)
 {
-    hashTableSize = 1000*n;
+    collisions = 0;
+    hashTableSize = 2*n;
     hashTable.resize(hashTableSize, "");
     bitsetSieveOfEratosthenes.resize(hashTableSize,true);
     sieveOfEratosthenes();
@@ -15,9 +16,9 @@ void DoubleHash::initDoubleHash(int n)
 
 void DoubleHash::sieveOfEratosthenes()
 {
-    for (int p = 2; p * p <= hashTableSize; p++) {
-        if (bitsetSieveOfEratosthenes[p] == true) {
-            for (int i = p * p; i <= hashTableSize; i += p)
+    for (uint64_t pr = 2; pr * pr < hashTableSize; pr++) {
+        if (bitsetSieveOfEratosthenes[pr] == true) {
+            for (uint64_t i = pr * pr; i < hashTableSize; i += pr)
                 bitsetSieveOfEratosthenes[i] = false;
         }
     }
@@ -35,7 +36,7 @@ uint64_t DoubleHash::rollingHash1(const std::string& s) const
     uint64_t hash1 = 0;
 
     for (int i = 0; i < s.length(); ++i)
-        hash1 = (hash1 * p1 + (uint64_t)s[i]) % hashTableSize;
+        hash1 = (hash1 * p1 + (uint64_t)s[i]) % p;
 
     return hash1;
 }
@@ -45,19 +46,45 @@ uint64_t DoubleHash::rollingHash2(const std::string& s) const
     uint64_t hash2 = 0;
 
     for (int i = 0; i < s.length(); ++i)
-        hash2 = (hash2 * p2 + (uint64_t)s[i]) % hashTableSize;
-
-    hash2 = biggestPrime - hash2%biggestPrime;
+        hash2 = (hash2 * p2 + (uint64_t)s[i]) % p;
 
     return hash2;
 }
 
-
-bool DoubleHash::searchWord(const std::string& s) const
+uint64_t DoubleHash::updateRollingHash1(uint64_t currhash, uint64_t next) const
 {
-    uint64_t hashValue = rollingHash1(s);
+   return (currhash * p1 + next) % p;
+}
+
+uint64_t DoubleHash::updateRollingHash2(uint64_t currhash, uint64_t next) const
+{
+    return (currhash * p2 + next) % p;
+}
+
+void DoubleHash::addWord(const std::string& s)
+{
+    uint64_t hashValue = rollingHash1(s) % hashTableSize;
+    uint64_t hashOffset = toHashOffset(rollingHash2(s));
+
+    while(hashTable[hashValue] != "") {
+        ++collisions;
+        hashValue = (hashValue + hashOffset)%hashTableSize;
+    }
+
+    hashTable[hashValue] = s;
+}
+
+uint64_t DoubleHash::toHashOffset(uint64_t h) const
+{
+    return biggestPrime - (h%biggestPrime);
+}
+
+bool DoubleHash::searchWord(const std::string& s,
+    uint64_t hashValue, uint64_t hashOffset) const
+{
+    hashValue = hashValue % hashTableSize;
+    hashOffset = toHashOffset(hashOffset);
     uint64_t initialHashValue = hashValue;
-    uint64_t hashOffset = rollingHash2(s);
     bool firstIteration = true;
 
     while(true) {
@@ -80,24 +107,16 @@ void HashMapSolver::initWords(const std::list<std::string>& words) {
 
     maxlen = 0;
     minlen = std::numeric_limits<uint64_t>::max();
-    int collisions = 0;
 
     for (const std::string& s : words)
     {
         maxlen = std::max(maxlen, s.length());
         minlen = std::min(minlen, s.length());
-        uint64_t hashValue = doubleHash.rollingHash1(s);
-        uint64_t hashOffset = doubleHash.rollingHash2(s);
-
-        while(doubleHash.hashTable[hashValue] != "") {
-            ++collisions;
-            hashValue = (hashValue + hashOffset)%doubleHash.hashTableSize;
-        }
-
-        doubleHash.hashTable[hashValue] = s;
+        doubleHash.addWord(s);
     }
 
-    std::cerr << "Number of collisions: " << collisions << std::endl;
+    std::cerr << "HashMap number of collisions: " << doubleHash.collisions <<
+    std::endl;
 }
 
 void HashMapSolver::findWords(std::unordered_set<std::string>& found)
@@ -108,28 +127,33 @@ void HashMapSolver::findWords(std::unordered_set<std::string>& found)
     lettersVisited = totalOperations = 0;
 
     int numOfPos = sopa.size()*sopa[0].size(), posDone = 0;
-    std::cout << "Starting search with HashMapSolver" << std::endl;
+    std::cerr << "Starting search with HashMapSolver" << std::endl;
     for (int i = 0; i < sopa.size(); ++i)
     {
         for (int j = 0; j < sopa[i].size(); ++j) {
-            findWordsFrom(i, j, seen, 0, res, found);
+            findWordsFrom(i, j, seen, 0, 0, 0, res, found);
             ++posDone;
-            std::cout << (double)posDone*100.0/(double)numOfPos << "%" << std::endl;
+            std::cerr << (double)posDone*100.0/(double)numOfPos << "%" <<
+            std::endl;
         }
     }
 }
 
 void HashMapSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& seen,
-        size_t currlen, std::string& res, std::unordered_set<std::string>& found)
+        size_t currlen, uint64_t h1, uint64_t h2, std::string& res,
+        std::unordered_set<std::string>&
+        found)
 {
     if (seen[i][j] || currlen >= maxlen) return;
     ++lettersVisited;
     seen[i][j] = true;
     res.push_back(sopa[i][j]);
+    h1 = doubleHash.updateRollingHash1(h1, (uint64_t)sopa[i][j]);
+    h2 = doubleHash.updateRollingHash2(h2, (uint64_t)sopa[i][j]);
 
 
     if (currlen + 1 >= minlen) {
-        if (doubleHash.searchWord(res))
+        if (doubleHash.searchWord(res, h1, h2))
             found.insert(res);
         ++totalOperations;
     }
@@ -143,7 +167,7 @@ void HashMapSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& 
             int nj = j + dj;
 
             if (ni >= 0 && ni < sopa.size() && nj >= 0 && nj < sopa[ni].size())
-                findWordsFrom(ni, nj, seen, currlen + 1, res, found);
+                findWordsFrom(ni, nj, seen, currlen + 1, h1, h2, res, found);
         }
     }
 

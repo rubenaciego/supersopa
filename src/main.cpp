@@ -17,6 +17,8 @@ int main(int argc, const char* argv[])
         return 1;
     }
 
+    const double bloomp = 1e-8;
+
     if (argc == 6)
     {
         int nwords = std::stoi(argv[2]);
@@ -66,7 +68,7 @@ int main(int argc, const char* argv[])
         {
             SortedVecSolver svec;
             TrieSolver trie;
-            BloomSolver bloom;
+            BloomSolver bloom(bloomp);
             HashMapSolver hash;
 
             int n = sopasize(rng);
@@ -198,7 +200,7 @@ int main(int argc, const char* argv[])
         {
             case 1: solver = new SortedVecSolver; break;
             case 2: solver = new TrieSolver; break;
-            case 3: solver = new BloomSolver; break;
+            case 3: solver = new BloomSolver(bloomp); break;
             case 4: solver = new HashMapSolver; break;
             default: std::cout << "Incorrect option" << std::endl;
         }

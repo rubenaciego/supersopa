@@ -32,9 +32,13 @@ uint64_t IndependentHash::operator()(uint64_t x) const
     return res;
 }
 
+BloomSolver::BloomSolver(double colProb) : SopaSolver()
+{
+    desiredP = colProb;
+}
+
 void BloomSolver::initWords(const std::list<std::string>& words)
 {
-    const double desiredP = 1e-16;
     uint64_t n = words.size();
     uint64_t k = (uint64_t)(-log2(desiredP));
     uint64_t m = (uint64_t)(-(double)n * log(desiredP)/(log(2)*log(2)));
@@ -67,14 +71,15 @@ void BloomSolver::findWords(std::unordered_set<std::string>& found)
     lettersVisited = totalOperations = 0;
 
     int numOfPos = sopa.size()*sopa[0].size(), posDone = 0;
-    std::cout << "Starting search with BloomSolver" << std::endl;
+    std::cerr << "Starting search with BloomSolver" << std::endl;
     for (int i = 0; i < sopa.size(); ++i)
     {
         for (int j = 0; j < sopa[i].size(); ++j)
         {
             findWordsFrom(i, j, seen, 0, 0, res, found);
             ++posDone;
-            std::cout << (double)posDone*100.0/(double)numOfPos << "%" << std::endl;
+            std::cerr << (double)posDone*100.0/(double)numOfPos << "%" <<
+            std::endl;
         }
     }
 }
