@@ -71,7 +71,7 @@ int main(int argc, const char* argv[])
 
             int n = sopasize(rng);
 
-            svec.initSopa(sopasize(rng), finalwords);
+            svec.initSopa(n, finalwords);
             trie.initSopa(svec.getSopa());
             bloom.initSopa(svec.getSopa());
             hash.initSopa(svec.getSopa());

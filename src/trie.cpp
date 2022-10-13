@@ -19,9 +19,14 @@ void TrieSolver::findWords(std::unordered_set<std::string>& found)
     res.reserve(maxLength);
     lettersVisited = totalOperations = 0;
     
+    int numOfPos = sopa.size()*sopa[0].size(), posDone = 0;
+    std::cout << "Starting search with TrieSolver" << std::endl;
     for (int i = 0; i < sopa.size(); ++i) {
-        for (int j = 0; j < sopa[i].size(); ++j)
+        for (int j = 0; j < sopa[i].size(); ++j) {
             findWordsFrom(i, j, seen, root, 0, res, found);
+            ++posDone;
+            std::cout << (double)posDone*100.0/(double)numOfPos << "%" << std::endl;
+        }
     }
 }
 
@@ -44,7 +49,7 @@ TST* TrieSolver::newNode(char c, int endOfWord) {
     return temp;
 }
 
-//Inserting the word into the trie
+//Inserting recursively the word into the trie
 void TrieSolver::insertWord(const std::string& word, int i, TST** node) {
     if (*node == NULL) {
         *node = new TST();
