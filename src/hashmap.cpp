@@ -108,11 +108,24 @@ void HashMapSolver::initWords(const std::list<std::string>& words) {
     maxlen = 0;
     minlen = std::numeric_limits<uint64_t>::max();
 
+    uint64_t nprefixes = 0;
     for (const std::string& s : words)
     {
+        nprefixes += s.length();
         maxlen = std::max(maxlen, (uint64_t) s.length());
         minlen = std::min(minlen, (uint64_t) s.length());
         doubleHash.addWord(s);
+    }
+
+    prefixHash.initDoubleHash(nprefixes);
+
+    for (const std::string& s : words)
+    {
+        for (int i = 0; i < s.length(); ++i)
+        {
+            std::string pref = s.substr(0, i + 1);
+            prefixHash.addWord(pref);
+        }
     }
 
     std::cerr << "HashMap number of collisions: " << doubleHash.collisions <<
@@ -146,11 +159,17 @@ void HashMapSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& 
 {
     if (seen[i][j] || currlen >= maxlen) return;
     ++lettersVisited;
-    seen[i][j] = true;
-    res.push_back(sopa[i][j]);
     h1 = doubleHash.updateRollingHash1(h1, (uint64_t)sopa[i][j]);
     h2 = doubleHash.updateRollingHash2(h2, (uint64_t)sopa[i][j]);
+    seen[i][j] = true;
+    res.push_back(sopa[i][j]);
 
+    if (!prefixHash.searchWord(res, h1, h2))
+    {
+        res.pop_back();
+        seen[i][j] = false;
+        return;
+    }
 
     if (currlen + 1 >= minlen) {
         if (doubleHash.searchWord(res, h1, h2))
