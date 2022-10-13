@@ -54,12 +54,29 @@ void BloomSolver::initWords(const std::list<std::string>& words)
     maxlen = 0;
     minlen = std::numeric_limits<uint64_t>::max();
 
+    uint64_t nprefixes = 0;
+
     for (const std::string& s : words)
     {
+        nprefixes += s.length();
         maxlen = std::max(maxlen, s.length());
         minlen = std::min(minlen, s.length());
         uint64_t hash = rollingHash(s);
-        addBloom(hash);
+        addBloom(hash, bitset);
+    }
+
+    uint64_t mprefix = (uint64_t)(-(double)nprefixes * log(desiredP)/(log(2)*log(2))
+    );
+    prefixes.resize(mprefix);
+
+    for (const std::string& s : words)
+    {
+        uint64_t h = 0;
+        for (int i = 0; i < s.length(); ++i)
+        {
+            h = (h * b + s[i]) % p;
+            addBloom(h, prefixes);
+        }
     }
 }
 
@@ -89,11 +106,12 @@ void BloomSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& se
 {
     if (seen[i][j] || currlen >= maxlen) return;
     ++lettersVisited;
-    seen[i][j] = true;
     curr_hash = (curr_hash * b + sopa[i][j]) % p;
+    if (!checkBloom(curr_hash, prefixes)) return;
+    seen[i][j] = true;
     res.push_back(sopa[i][j]);
 
-    if (currlen + 1 >= minlen && checkBloom(curr_hash))
+    if (currlen + 1 >= minlen && checkBloom(curr_hash, bitset))
         found.insert(res);
 
     for (int di = -1; di <= 1; ++di)
@@ -122,19 +140,19 @@ uint64_t BloomSolver::rollingHash(const std::string& s) const
     
     return res;
 }
-void BloomSolver::addBloom(uint64_t val)
+void BloomSolver::addBloom(uint64_t val, std::vector<bool>& v)
 {
     for (int i = 0; i < hashes.size(); ++i)
-        bitset[hashes[i](val) % bitset.size()] = true;
+        v[hashes[i](val) % bitset.size()] = true;
 }
 
-bool BloomSolver::checkBloom(uint64_t val)
+bool BloomSolver::checkBloom(uint64_t val, std::vector<bool>& v)
 {
     for (int i = 0; i < hashes.size(); ++i)
     {
         uint64_t index = hashes[i](val) % bitset.size();
         totalOperations += hashes.size();
-        if (!bitset[index]) return false;
+        if (!v[index]) return false;
     }
 
     return true;

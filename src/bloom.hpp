@@ -24,6 +24,7 @@ public:
 private:
     std::vector<IndependentHash> hashes;
     std::vector<bool> bitset;
+    std::vector<bool> prefixes;
     uint64_t maxlen;
     uint64_t minlen;
     double desiredP;
@@ -33,8 +34,8 @@ private:
     const uint64_t b = 31;
 
     uint64_t rollingHash(const std::string& s) const;
-    void addBloom(uint64_t val);
-    bool checkBloom(uint64_t val);
+    void addBloom(uint64_t val, std::vector<bool>& v);
+    bool checkBloom(uint64_t val, std::vector<bool>& v);
 
     void findWordsFrom(int i, int j, std::vector<std::vector<bool>>& seen, uint64_t curr_hash,
         size_t currlen, std::string& res, std::unordered_set<std::string>& found);
