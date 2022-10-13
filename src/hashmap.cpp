@@ -102,18 +102,18 @@ void HashMapSolver::initWords(const std::list<std::string>& words) {
 
 void HashMapSolver::findWords(std::unordered_set<std::string>& found)
 {
-    std::vector<std::vector<bool>> seen;
-    seen.resize(sopa.size());
+    std::vector<std::vector<bool>> seen(sopa.size(), std::vector<bool> (sopa[0].size(), false));
     std::string res;
     res.reserve(maxlen);
 
-    for (int i = 0; i < seen.size(); ++i)
-        seen[i].resize(sopa[i].size());
-
+    int numOfPos = sopa.size()*sopa[0].size(), posDone = 0;
+    std::cout << "Starting search with HashMapSolver" << std::endl;
     for (int i = 0; i < sopa.size(); ++i)
     {
         for (int j = 0; j < sopa[i].size(); ++j) {
             findWordsFrom(i, j, seen, 0, res, found);
+            ++posDone;
+            std::cout << (double)posDone*100.0/(double)numOfPos << "%" << std::endl;
         }
     }
 }
