@@ -89,14 +89,14 @@ int main(int argc, const char* argv[])
             std::unordered_set<std::string> fvec, ftrie, fbloom, fhash;
 
             auto t1 = std::chrono::high_resolution_clock::now();
-            svec.findWords(fvec);
+            trie.findWords(ftrie);
             auto t2 = std::chrono::high_resolution_clock::now();
-            auto vecdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+            auto triedur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
             t1 = std::chrono::high_resolution_clock::now();
-            trie.findWords(ftrie);
+            svec.findWords(fvec);
             t2 = std::chrono::high_resolution_clock::now();
-            auto triedur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+            auto vecdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
             t1 = std::chrono::high_resolution_clock::now();
             bloom.findWords(fbloom);
