@@ -1,15 +1,10 @@
 #include "sortedvec.hpp"
-#include <iostream>
-#include <algorithm>
-#include <queue>
-#include <utility>
-#include <string>
 
 void SortedVecSolver::initWords(const std::list<std::string>& words) {
     size_d = words.size();
     d = { words.begin(), words.end() };
     max_length = 0;
-    
+
     for (const std::string& s : d)
         max_length = std::max(max_length, (int)s.length());
 
@@ -35,7 +30,10 @@ int SortedVecSolver::lowerBound(const std::vector<std::string>& v, const std::st
     if (l >= r) return r;
     ++totalOperations;
     int mid = (l+r)/2;
-    if (v[mid] == word) found = true;
+    if (v[mid] == word) {
+        found = true;
+        return mid;
+    }
     if (v[mid] < word) return lowerBound(v, word, mid+1, r, found);
     else return lowerBound(v, word, l, mid, found);
 }
@@ -51,18 +49,18 @@ int SortedVecSolver::upperBound(const std::vector<std::string>& v, const std::st
 void SortedVecSolver::search(int i, int j, std::unordered_set<std::string>& found, int len,
     std::string& word, int left, int right, std::vector<std::vector<bool>>& visited)
 {
-    ++lettersVisited;
     if (visited[i][j] || len >= max_length || left > right) return;
+    ++lettersVisited;
     visited[i][j] = true;
     word.push_back(sopa[i][j]);
     int n = sopa.size();
-    
+
     bool foundBound = false;
 
     if (word > d[size_d-1]) left = size_d;
     else {
-        left = lowerBound(d, word, left, right, foundBound);
         right = upperBound(d, word, left, right, len);
+        left = lowerBound(d, word, left, right, foundBound);
     }
 
     if (foundBound || binarySearch(d, word, left, right)) found.insert(word);
@@ -86,12 +84,9 @@ void SortedVecSolver::findWords(std::unordered_set<std::string>& found) {
     int total_iters = 0;
     lettersVisited = totalOperations = 0;
 
-    std::vector<std::vector<bool>> visited(n);
+    std::vector<std::vector<bool>> visited(n, std::vector<bool>(n, false));
     std::string res;
     res.reserve(max_length);
-
-    for (int i = 0; i < n; ++i)
-        visited[i].resize(n);
 
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {

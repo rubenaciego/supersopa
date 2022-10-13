@@ -3,7 +3,7 @@
 #include <limits>
 #include <iostream>
 
-IndependentHash::IndependentHash(size_t k)
+IndependentHash::IndependentHash(uint64_t k)
 {
     coefs.resize(k);
 
@@ -19,7 +19,7 @@ IndependentHash::IndependentHash(size_t k)
             coefs[i] = dist(rng);
             nonzero |= i != 0 && coefs[i] != 0;
         }
-    } while (!nonzero);   
+    } while (!nonzero);
 }
 
 uint64_t IndependentHash::operator()(uint64_t x) const
@@ -52,8 +52,8 @@ void BloomSolver::initWords(const std::list<std::string>& words)
 
     for (const std::string& s : words)
     {
-        maxlen = std::max(maxlen, s.length());
-        minlen = std::min(minlen, s.length());
+        maxlen = std::max(maxlen, (uint64_t) s.length());
+        minlen = std::min(minlen, (uint64_t) s.length());
         uint64_t hash = rollingHash(s);
         addBloom(hash);
     }
@@ -112,7 +112,7 @@ uint64_t BloomSolver::rollingHash(const std::string& s) const
 
     for (int i = 0; i < s.length(); ++i)
         res = (res * b + (uint64_t)s[i]) % p;
-    
+
     return res;
 }
 void BloomSolver::addBloom(uint64_t val)

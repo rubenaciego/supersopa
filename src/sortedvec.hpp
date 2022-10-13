@@ -1,6 +1,11 @@
 #pragma once
 
 #include "sopasolver.hpp"
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#include <utility>
+#include <string>
 
 class SortedVecSolver : public SopaSolver
 {

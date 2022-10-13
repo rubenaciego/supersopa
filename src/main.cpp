@@ -116,7 +116,7 @@ int main(int argc, const char* argv[])
                 << "Bloom filter operations: visited = " << bloom.getMetrics().first << ", total = " << bloom.getMetrics().second << std::endl
                 << "Hashmap operations: visited = " << hash.getMetrics().first << ", total = " << hash.getMetrics().second << std::endl;
 
-            
+
             std::cout << "Bloom filter false positives: " << (int)fbloom.size() - (int)fvec.size() << std::endl;
             std::cout << std::endl;
 
@@ -217,11 +217,11 @@ int main(int argc, const char* argv[])
             auto t2 = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
             auto metrics = solver->getMetrics();
-            
+
             std::cout << "Total number of letters visited: " << metrics.first << std::endl;
             std::cout << "Total number of operations: " << metrics.second << std::endl;
             std::cout << "Following words found in " << duration.count() << "ms:" << std::endl;
-            
+
             for(const std::string& s : found)
                 std::cout << s << std::endl;
 
