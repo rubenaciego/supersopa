@@ -148,9 +148,8 @@ void HashMapSolver::findWords(std::unordered_set<std::string>& found)
     lettersVisited = totalOperations = 0;
 
     for (int i = 0; i < sopa.size(); ++i) {
-        for (int j = 0; j < sopa[i].size(); ++j) {
+        for (int j = 0; j < sopa[i].size(); ++j)
             findWordsFrom(i, j, seen, 0, 0, 0, res, found);
-        }
     }
 }
 

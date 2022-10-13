@@ -62,9 +62,7 @@ void SortedVecSolver::findWords(std::unordered_set<std::string>& found) {
     res.reserve(max_length);
 
     for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
+        for (int j = 0; j < n; ++j)
             search(i, j, found, 0, res, 0, size_d - 1, visited);
-        }
     }
-
 }

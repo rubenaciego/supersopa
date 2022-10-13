@@ -20,21 +20,20 @@ void TrieSolver::findWords(std::unordered_set<std::string>& found)
     lettersVisited = totalOperations = 0;
 
     for (int i = 0; i < sopa.size(); ++i) {
-        for (int j = 0; j < sopa[i].size(); ++j) {
+        for (int j = 0; j < sopa[i].size(); ++j)
             findWordsFrom(i, j, seen, root, 0, res, found);
-        }
     }
 }
 
 // Initializing the TST, aiming to build it as balanced as possible
 void TrieSolver::initTST(int l, int r, const std::vector<std::string>& sortedWords)
 {
-        if (l <= r) {
-            int mid = (l+r)/2;
-            insertWord(sortedWords[mid], 0, &root);
-            initTST(l, mid-1, sortedWords);
-            initTST(mid+1, r, sortedWords);
-        }
+    if (l <= r) {
+        int mid = (l+r)/2;
+        insertWord(sortedWords[mid], 0, &root);
+        initTST(l, mid-1, sortedWords);
+        initTST(mid+1, r, sortedWords);
+    }
 }
 
 TST* TrieSolver::newNode(char c, int endOfWord) {

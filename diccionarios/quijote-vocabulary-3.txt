@@ -4225,7 +4225,7 @@ cantase
 cantasen
 cante
 canten
-canterà
+cantera
 cantes
 cantia
 cantidad
@@ -12006,7 +12006,7 @@ giralda
 girifalte
 girifaltes
 gitano
-giù
+giu
 globo
 gloria
 glorias
@@ -18648,7 +18648,7 @@ pistoletes
 pistos
 pisuerga
 pito
-più
+piu
 pizmienta
 pizmiento
 place
