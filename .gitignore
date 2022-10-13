@@ -1,5 +1,7 @@
+.idea/**
 *.o
 settings.json
 supersopa
 .vscode
 .DS_Store
+/.idea/

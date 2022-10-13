@@ -32,9 +32,13 @@ uint64_t IndependentHash::operator()(uint64_t x) const
     return res;
 }
 
+BloomSolver::BloomSolver(double colProb) : SopaSolver()
+{
+    desiredP = colProb;
+}
+
 void BloomSolver::initWords(const std::list<std::string>& words)
 {
-    const double desiredP = 1e-16;
     uint64_t n = words.size();
     uint64_t k = (uint64_t)(-log2(desiredP));
     uint64_t m = (uint64_t)(-(double)n * log(desiredP)/(log(2)*log(2)));
@@ -61,27 +65,30 @@ void BloomSolver::initWords(const std::list<std::string>& words)
 
 void BloomSolver::findWords(std::unordered_set<std::string>& found)
 {
-    std::vector<std::vector<bool>> seen;
-    seen.resize(sopa.size());
+    std::vector<std::vector<bool>> seen(sopa.size(), std::vector<bool> (sopa[0].size(), false));
     std::string res;
     res.reserve(maxlen);
     lettersVisited = totalOperations = 0;
 
-    for (int i = 0; i < seen.size(); ++i)
-        seen[i].resize(sopa[i].size());
-
+    int numOfPos = sopa.size()*sopa[0].size(), posDone = 0;
+    std::cerr << "Starting search with BloomSolver" << std::endl;
     for (int i = 0; i < sopa.size(); ++i)
     {
         for (int j = 0; j < sopa[i].size(); ++j)
+        {
             findWordsFrom(i, j, seen, 0, 0, res, found);
+            ++posDone;
+            std::cerr << (double)posDone*100.0/(double)numOfPos << "%" <<
+            std::endl;
+        }
     }
 }
 
 void BloomSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& seen, uint64_t curr_hash,
         size_t currlen, std::string& res, std::unordered_set<std::string>& found)
 {
-    ++lettersVisited;
     if (seen[i][j] || currlen >= maxlen) return;
+    ++lettersVisited;
     seen[i][j] = true;
     curr_hash = (curr_hash * b + sopa[i][j]) % p;
     res.push_back(sopa[i][j]);

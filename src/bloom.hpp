@@ -17,6 +17,7 @@ private:
 class BloomSolver : public SopaSolver
 {
 public:
+    BloomSolver(double colProb);
     virtual void initWords(const std::list<std::string>& words) override;
     virtual void findWords(std::unordered_set<std::string>& found) override;
 
@@ -25,6 +26,7 @@ private:
     std::vector<bool> bitset;
     uint64_t maxlen;
     uint64_t minlen;
+    double desiredP;
 
     // Rolling hash
     const uint64_t p = (1LL << 61) - 1;

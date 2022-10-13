@@ -17,6 +17,8 @@ int main(int argc, const char* argv[])
         return 1;
     }
 
+    const double bloomp = 1e-8;
+
     if (argc == 6)
     {
         int nwords = std::stoi(argv[2]);
@@ -66,12 +68,12 @@ int main(int argc, const char* argv[])
         {
             SortedVecSolver svec;
             TrieSolver trie;
-            BloomSolver bloom;
+            BloomSolver bloom(bloomp);
             HashMapSolver hash;
 
             int n = sopasize(rng);
 
-            svec.initSopa(sopasize(rng), finalwords);
+            svec.initSopa(n, finalwords);
             trie.initSopa(svec.getSopa());
             bloom.initSopa(svec.getSopa());
             hash.initSopa(svec.getSopa());
@@ -87,14 +89,14 @@ int main(int argc, const char* argv[])
             std::unordered_set<std::string> fvec, ftrie, fbloom, fhash;
 
             auto t1 = std::chrono::high_resolution_clock::now();
-            svec.findWords(fvec);
+            trie.findWords(ftrie);
             auto t2 = std::chrono::high_resolution_clock::now();
-            auto vecdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+            auto triedur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
             t1 = std::chrono::high_resolution_clock::now();
-            trie.findWords(ftrie);
+            svec.findWords(fvec);
             t2 = std::chrono::high_resolution_clock::now();
-            auto triedur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+            auto vecdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
             t1 = std::chrono::high_resolution_clock::now();
             bloom.findWords(fbloom);
@@ -198,7 +200,7 @@ int main(int argc, const char* argv[])
         {
             case 1: solver = new SortedVecSolver; break;
             case 2: solver = new TrieSolver; break;
-            case 3: solver = new BloomSolver; break;
+            case 3: solver = new BloomSolver(bloomp); break;
             case 4: solver = new HashMapSolver; break;
             default: std::cout << "Incorrect option" << std::endl;
         }

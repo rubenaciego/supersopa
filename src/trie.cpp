@@ -20,8 +20,9 @@ void TrieSolver::findWords(std::unordered_set<std::string>& found)
     lettersVisited = totalOperations = 0;
 
     for (int i = 0; i < sopa.size(); ++i) {
-        for (int j = 0; j < sopa[i].size(); ++j)
+        for (int j = 0; j < sopa[i].size(); ++j) {
             findWordsFrom(i, j, seen, root, 0, res, found);
+        }
     }
 }
 
@@ -44,7 +45,7 @@ TST* TrieSolver::newNode(char c, int endOfWord) {
     return temp;
 }
 
-//Inserting the word into the trie
+//Inserting recursively the word into the trie
 void TrieSolver::insertWord(const std::string& word, int i, TST** node) {
     if (*node == NULL) {
         *node = new TST();
@@ -80,8 +81,8 @@ TST* TrieSolver::searchNextLetter(char c, TST* currentNode) {
 
 void TrieSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& seen, TST* currentNode,
                                size_t currLength, std::string& res, std::unordered_set<std::string>& found) {
-    ++lettersVisited;
     if (seen[i][j] or currLength >= maxLength) return;
+    ++lettersVisited;
     TST* nextNode = searchNextLetter(sopa[i][j], currentNode);
     if (nextNode == nullptr) return;
     seen[i][j] = true;
