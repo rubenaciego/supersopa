@@ -11,20 +11,28 @@
 
 int main(int argc, const char* argv[])
 {
-    if (argc != 1 && argc != 6)
+    if (argc != 1 && argc < 6)
     {
-        std::cout << "supersopa dict_file nwords smin smax t" << std::endl;
+        std::cout << "supersopa dict_file nwords smin smax t (bloomfactor bloomk)" << std::endl;
         return 1;
     }
 
     const double bloomp = 1e-7;
 
-    if (argc == 6)
+    if (argc >= 6)
     {
         int nwords = std::stoi(argv[2]);
         int minsize = std::stoi(argv[3]);
         int maxsize = std::stoi(argv[4]);
         int t = std::stoi(argv[5]);
+        int bloomfactor = -1;
+        int bloomk = -1;
+
+        if (argc == 8)
+        {
+            bloomfactor = std::stoi(argv[6]);
+            bloomk = std::stoi(argv[7]);
+        }
 
         std::ifstream dict;
         dict.open(argv[1]);
@@ -68,8 +76,11 @@ int main(int argc, const char* argv[])
         {
             SortedVecSolver svec;
             TrieSolver trie;
-            BloomSolver bloom(10000, 3);
+            BloomSolver bloom(bloomp, BloomSolver::HashFunction::MURMUR3_HASH);
             HashMapSolver hash;
+
+            if (bloomfactor > 0)
+                bloom.setFactors(bloomfactor, bloomk);
 
             int n = sopasize(rng);
 
@@ -251,7 +262,7 @@ int main(int argc, const char* argv[])
             for(const std::string& s : found)
                 std::cout << s << std::endl;
 
-            //delete solver;
+            delete solver;
         }
 
         std::cout << "Choose implementation:\n\t1. Sorted vector\n\t2. Trie\n\t3. Bloom filter\n\t4. Hash map" << std::endl;

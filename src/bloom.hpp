@@ -17,13 +17,23 @@ private:
 class BloomSolver : public SopaSolver
 {
 public:
-    BloomSolver(double colProb);
-    BloomSolver(uint64_t bitfactor, uint64_t k);
+    enum class HashFunction
+    {
+        POLYNOMIAL_HASH,
+        MURMUR3_HASH
+    };
+
+    BloomSolver(double colProb, HashFunction hash = HashFunction::POLYNOMIAL_HASH);
+
+    void setFactors(uint64_t bitfactor, uint64_t k);
+
     virtual void initWords(const std::list<std::string>& words) override;
     virtual void findWords(std::unordered_set<std::string>& found) override;
 
 private:
+    HashFunction hashFunction;
     std::vector<IndependentHash> hashes;
+    std::vector<uint32_t> murmurseeds;
     std::vector<bool> bitset;
     std::vector<bool> prefixes;
     uint64_t maxlen;

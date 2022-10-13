@@ -1,4 +1,5 @@
 #include "bloom.hpp"
+#include "murmurhash3.h"
 #include <cmath>
 #include <limits>
 #include <iostream>
@@ -32,12 +33,13 @@ uint64_t IndependentHash::operator()(uint64_t x) const
     return res;
 }
 
-BloomSolver::BloomSolver(double colProb) : SopaSolver()
+BloomSolver::BloomSolver(double colProb, HashFunction hash) : SopaSolver()
 {
     desiredP = colProb;
+    hashFunction = hash;
 }
 
-BloomSolver::BloomSolver(uint64_t bitfactor, uint64_t k) : SopaSolver()
+void BloomSolver::setFactors(uint64_t bitfactor, uint64_t k)
 {
     desiredP = -1.0;
     this->bitfactor = bitfactor;
@@ -57,13 +59,25 @@ void BloomSolver::initWords(const std::list<std::string>& words)
     else
         m = n * bitfactor;
 
+    if (hashFunction == HashFunction::POLYNOMIAL_HASH)
+    {
+        hashes.reserve(k);
+
+        for (int i = 0; i < k; ++i)
+            hashes.emplace_back(k);
+    }
+    else
+    {
+        k += k & 1;
+        murmurseeds.resize(k / 2);
+
+        std::uniform_int_distribution<uint32_t> seeds(0, std::numeric_limits<uint32_t>::max());
+
+        for (int i = 0; i < murmurseeds.size(); ++i)
+            murmurseeds[i] = seeds(rng);
+    }
 
     std::cerr << "Bloom filter: m = " << m << ", k = " << k << std::endl;
-
-    hashes.reserve(k);
-
-    for (int i = 0; i < k; ++i)
-        hashes.emplace_back(k);
 
     bitset.resize(m);
     maxlen = 0;
@@ -156,17 +170,42 @@ uint64_t BloomSolver::rollingHash(const std::string& s) const
 }
 void BloomSolver::addBloom(uint64_t val, std::vector<bool>& v)
 {
-    for (int i = 0; i < hashes.size(); ++i)
-        v[hashes[i](val) % bitset.size()] = true;
+    if (hashFunction == HashFunction::POLYNOMIAL_HASH)
+    {
+        for (int i = 0; i < hashes.size(); ++i)
+            v[hashes[i](val) % bitset.size()] = true;
+    }
+    else
+    {
+        for (int i = 0; i < murmurseeds.size(); ++i)
+        {
+            uint64_t hash[2];
+            MurmurHash3_x64_128(&val, sizeof(val), murmurseeds[i], hash);
+            v[hash[0] % bitset.size()] = v[hash[1] % bitset.size()] = true;
+        }
+    }
 }
 
 bool BloomSolver::checkBloom(uint64_t val, std::vector<bool>& v)
 {
-    for (int i = 0; i < hashes.size(); ++i)
+    if (hashFunction == HashFunction::POLYNOMIAL_HASH)
     {
-        uint64_t index = hashes[i](val) % bitset.size();
-        totalOperations += hashes.size();
-        if (!v[index]) return false;
+        for (int i = 0; i < hashes.size(); ++i)
+        {
+            uint64_t index = hashes[i](val) % bitset.size();
+            totalOperations += hashes.size();
+            if (!v[index]) return false;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < murmurseeds.size(); ++i)
+        {
+            uint64_t hash[2];
+            MurmurHash3_x64_128(&val, sizeof(val), murmurseeds[i], hash);
+            if (!v[hash[0] % bitset.size()] || !v[hash[1] % bitset.size()])
+                return false;
+        }
     }
 
     return true;
