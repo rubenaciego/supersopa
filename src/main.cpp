@@ -227,7 +227,7 @@ int main(int argc, const char* argv[])
             for(const std::string& s : found)
                 std::cout << s << std::endl;
 
-            delete solver;
+            //delete solver;
         }
 
         std::cout << "Choose implementation:\n\t1. Sorted vector\n\t2. Trie\n\t3. Bloom filter\n\t4. Hash map" << std::endl;

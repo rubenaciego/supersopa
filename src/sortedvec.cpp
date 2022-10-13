@@ -26,16 +26,20 @@ bool SortedVecSolver::binarySearch(const std::vector<std::string>& v, const std:
     else return binarySearch(v, word, mid+1, r);
 }
 
-int SortedVecSolver::lowerBound(const std::vector<std::string>& v, const std::string& word, int l, int r, bool& found) {
-    if (l >= r) return r;
+int SortedVecSolver::lowerBound(const std::vector<std::string>& v, const std::string& word, int l, int r, bool& found, int size, int& pos) {
+    if (l >= r) return pos;
     ++totalOperations;
     int mid = (l+r)/2;
     if (v[mid] == word) {
         found = true;
         return mid;
     }
-    if (v[mid] < word) return lowerBound(v, word, mid+1, r, found);
-    else return lowerBound(v, word, l, mid, found);
+    if (v[mid].substr(0, size) <= word) {
+        pos = mid;
+        std::cout << pos << std::endl;
+        return lowerBound(v, word, mid+1, r, found, size, pos);
+    }
+    else return lowerBound(v, word, l, mid-1, found, size, pos);
 }
 
 int SortedVecSolver::upperBound(const std::vector<std::string>& v, const std::string& word, int l, int r, int size) {
@@ -60,10 +64,14 @@ void SortedVecSolver::search(int i, int j, std::unordered_set<std::string>& foun
     if (word > d[size_d-1]) left = size_d;
     else {
         right = upperBound(d, word, left, right, len);
-        left = lowerBound(d, word, left, right, foundBound);
+        int new_left = left;
+        left = lowerBound(d, word, left, right, foundBound, len, new_left);
+        left = new_left;
     }
 
-    if (foundBound || binarySearch(d, word, left, right)) found.insert(word);
+    //if (foundBound || binarySearch(d, word, left, right)) found.insert(word);
+    if (foundBound) found.insert(word);
+    std::cout << "Aqui amb l: " << left << " i r: " << right << " i: " << i << " j: " << j << " i word: " << word << std::endl;
 
     for (int di = -1; di <= 1; ++di)
     {

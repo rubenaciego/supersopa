@@ -22,6 +22,6 @@ private:
         std::string& word, int left, int right, std::vector<std::vector<bool>>& visited);
 
     bool binarySearch(const std::vector<std::string>& v, const std::string& word, int l, int r);
-    int lowerBound(const std::vector<std::string>& v, const std::string& word, int l, int r, bool& found);
+    int lowerBound(const std::vector<std::string>& v, const std::string& word, int l, int r, bool& found, int size, int& pos);
     int upperBound(const std::vector<std::string>& v, const std::string& word, int l, int r, int size);
 };

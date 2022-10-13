@@ -45,7 +45,7 @@ private:
     uint64_t maxlen;
     uint64_t minlen;
 
-    void findWordsFrom(int i, int j, std::vector<std::vector<bool>>& seen,
-        uint64_t h1, uint64_t h2, size_t currlen, std::string& res,
+    void findWordsFrom(int i, int j, std::vector<std::vector<bool>>& seen, size_t currlen,
+        uint64_t h1, uint64_t h2, std::string& res,
         std::unordered_set<std::string>& found);
 };

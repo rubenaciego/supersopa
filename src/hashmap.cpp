@@ -110,8 +110,8 @@ void HashMapSolver::initWords(const std::list<std::string>& words) {
 
     for (const std::string& s : words)
     {
-        maxlen = std::max(maxlen, s.length());
-        minlen = std::min(minlen, s.length());
+        maxlen = std::max(maxlen, (uint64_t) s.length());
+        minlen = std::min(minlen, (uint64_t) s.length());
         doubleHash.addWord(s);
     }
 
