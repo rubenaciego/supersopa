@@ -106,6 +106,7 @@ void HashMapSolver::findWords(std::unordered_set<std::string>& found)
     seen.resize(sopa.size());
     std::string res;
     res.reserve(maxlen);
+    lettersVisited = totalOperations = 0;
 
     for (int i = 0; i < seen.size(); ++i)
         seen[i].resize(sopa[i].size());
@@ -122,12 +123,15 @@ void HashMapSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& 
         size_t currlen, std::string& res, std::unordered_set<std::string>& found)
 {
     if (seen[i][j] || currlen >= maxlen) return;
+    ++lettersVisited;
     seen[i][j] = true;
     res.push_back(sopa[i][j]);
 
 
-    if (currlen + 1 >= minlen && doubleHash.searchWord(res)) {
-        found.insert(res);
+    if (currlen + 1 >= minlen) {
+        if (doubleHash.searchWord(res))
+            found.insert(res);
+        ++totalOperations;
     }
 
     for (int di = -1; di <= 1; ++di)
