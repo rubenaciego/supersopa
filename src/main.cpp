@@ -94,11 +94,6 @@ int main(int argc, const char* argv[])
             auto triedur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
             t1 = std::chrono::high_resolution_clock::now();
-            svec.findWords(fvec);
-            t2 = std::chrono::high_resolution_clock::now();
-            auto vecdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
-
-            t1 = std::chrono::high_resolution_clock::now();
             bloom.findWords(fbloom);
             t2 = std::chrono::high_resolution_clock::now();
             auto bloomdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
@@ -107,6 +102,11 @@ int main(int argc, const char* argv[])
             hash.findWords(fhash);
             t2 = std::chrono::high_resolution_clock::now();
             auto hashdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+
+            t1 = std::chrono::high_resolution_clock::now();
+            svec.findWords(fvec);
+            t2 = std::chrono::high_resolution_clock::now();
+            auto vecdur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
             std::cout << "Sorted vector: " << vecdur.count() << "ms" << std::endl
                 << "Trie: " << triedur.count() << "ms" << std::endl
@@ -156,6 +156,26 @@ int main(int argc, const char* argv[])
                 std::cerr << "Present in bloom and not in vector:" << std::endl;
 
                 for (const std::string& s : fbloom)
+                {
+                    if (!fvec.count(s))
+                        std::cerr << s << std::endl;
+                }
+            }
+
+            if (fvec != fhash)
+            {
+                std::cerr << "Difference between sorted vector and hash map implementations!" << std::endl
+                    << "Present in vector and not in hash map:" << std::endl;
+
+                for (const std::string& s : fvec)
+                {
+                    if (!fhash.count(s))
+                        std::cerr << s << std::endl;
+                }
+
+                std::cerr << "Present in hash map and not in vector:" << std::endl;
+
+                for (const std::string& s : fhash)
                 {
                     if (!fvec.count(s))
                         std::cerr << s << std::endl;
