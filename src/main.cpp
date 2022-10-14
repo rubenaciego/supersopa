@@ -196,6 +196,34 @@ int main(int argc, const char* argv[])
                         std::cerr << s << std::endl;
                 }
             }
+            bool vecFound, trieFound, bloomFound, fhashFound;
+            vecFound = trieFound = bloomFound = fhashFound = true;
+            for (const std::string& word : finalwords) {
+                if (fvec.find(word) == fvec.end()) {
+                    std::cout << word << " wasn´t found with SortedVecSolver" << std::endl;
+                    vecFound = false;
+                }
+                if (ftrie.find(word) == ftrie.end()) {
+                    std::cout << word << " wasn´t found with TrieSolver" << std::endl;
+                    trieFound = false;
+                }
+                if (fbloom.find(word) == fbloom.end()) {
+                    std::cout << word << " wasn´t found with BloomSolver" << std::endl;
+                    bloomFound = false;
+                }
+                if (fhash.find(word) == fhash.end()) {
+                    std::cout << word << " wasn´t found with HashMapSolver" << std::endl;
+                    fhashFound = false;
+                }
+            }
+            if (vecFound) std::cout << "All the inserted words were found with SortedVecSolver" << std::endl;
+            else std::cout << "SortedVecSolver missed some words" << std::endl;
+            if (trieFound) std::cout << "All the inserted words were found with TrieSolver" << std::endl;
+            else std::cout << "TrieSolver missed some words" << std::endl;
+            if (bloomFound) std::cout << "All the inserted words were found with BloomSolver" << std::endl;
+            else std::cout << "BloomSolver missed some words" << std::endl;
+            if (fhashFound) std::cout << "All the inserted words were found with HashMapSolver" << std::endl;
+            else std::cout << "HashMapSolver missed some words" << std::endl;
         }
 
         return 0;
