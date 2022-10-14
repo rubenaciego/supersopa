@@ -12,7 +12,7 @@ public:
     SopaSolver();
 
     void initSopa(int n);
-    void initSopa(int n, const std::list<std::string>& words);
+    void initSopa(int n, const std::list<std::string>& words,std::vector<bool>& added);
     void initSopa(const std::vector<std::vector<char>>& sopa);
 
     void printSopa() const;

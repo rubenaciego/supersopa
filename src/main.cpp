@@ -83,8 +83,9 @@ int main(int argc, const char* argv[])
                 bloom.setFactors(bloomfactor, bloomk);
 
             int n = sopasize(rng);
-
-            svec.initSopa(n, finalwords);
+            std::vector<bool> inserted((int)finalwords.size(), true);
+            
+            svec.initSopa(n, finalwords, inserted);
             trie.initSopa(svec.getSopa());
             bloom.initSopa(svec.getSopa());
             hash.initSopa(svec.getSopa());
@@ -95,7 +96,7 @@ int main(int argc, const char* argv[])
             hash.initWords(wordlist);
 
             std::cout << "SuperSopa de mida " << n << std::endl;
-            svec.printSopa();
+            //svec.printSopa();
 
             std::unordered_set<std::string> fvec, ftrie, fbloom, fhash;
 
@@ -198,32 +199,28 @@ int main(int argc, const char* argv[])
             }
             bool vecFound, trieFound, bloomFound, fhashFound;
             vecFound = trieFound = bloomFound = fhashFound = true;
+            int k = 0;
             for (const std::string& word : finalwords) {
-                if (fvec.find(word) == fvec.end()) {
+                if (fvec.find(word) == fvec.end() and !inserted[k]) {
                     std::cout << word << " wasn´t found with SortedVecSolver" << std::endl;
                     vecFound = false;
                 }
-                if (ftrie.find(word) == ftrie.end()) {
+                if (ftrie.find(word) == ftrie.end() and !inserted[k]) {
                     std::cout << word << " wasn´t found with TrieSolver" << std::endl;
                     trieFound = false;
                 }
-                if (fbloom.find(word) == fbloom.end()) {
+                if (fbloom.find(word) == fbloom.end() and !inserted[k]) {
                     std::cout << word << " wasn´t found with BloomSolver" << std::endl;
                     bloomFound = false;
                 }
-                if (fhash.find(word) == fhash.end()) {
+                if (fhash.find(word) == fhash.end() and !inserted[k]) {
                     std::cout << word << " wasn´t found with HashMapSolver" << std::endl;
                     fhashFound = false;
                 }
+                ++k;
             }
-            if (vecFound) std::cout << "All the inserted words were found with SortedVecSolver" << std::endl;
-            else std::cout << "SortedVecSolver missed some words" << std::endl;
-            if (trieFound) std::cout << "All the inserted words were found with TrieSolver" << std::endl;
-            else std::cout << "TrieSolver missed some words" << std::endl;
-            if (bloomFound) std::cout << "All the inserted words were found with BloomSolver" << std::endl;
-            else std::cout << "BloomSolver missed some words" << std::endl;
-            if (fhashFound) std::cout << "All the inserted words were found with HashMapSolver" << std::endl;
-            else std::cout << "HashMapSolver missed some words" << std::endl;
+            if (vecFound && trieFound && bloomFound && fhashFound) std::cout << 1 << std::endl << std::endl;
+            else std::cout << 0 << std::endl << std::endl;
         }
 
         return 0;
@@ -270,7 +267,8 @@ int main(int argc, const char* argv[])
 
         if (solver != nullptr)
         {
-            solver->initSopa(size, words);
+            std::vector<bool> inserted((int)words.size(), true);
+            solver->initSopa(size, words, inserted);
             solver->printSopa();
             std::cout << std::endl;
 
@@ -289,6 +287,18 @@ int main(int argc, const char* argv[])
 
             for(const std::string& s : found)
                 std::cout << s << std::endl;
+            
+            bool solutionFound = true;
+            int k = 0;
+            for (const std::string& word : words) {
+                if (found.find(word) == found.end() and !inserted[k]) {
+                    std::cout << word << " wasn´t found with the specified Solver" << std::endl;
+                    solutionFound = false;
+                }
+                ++k;
+            }
+            if (solutionFound) std::cout << "All the inserted words were found with the specified Solver" << std::endl;
+            else std::cout << "The Solver missed some words" << std::endl;
 
             delete solver;
         }

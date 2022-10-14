@@ -31,14 +31,16 @@ void SopaSolver::initSopa(const std::vector<std::vector<char>>& sopa)
     this->sopa = sopa;
 }
 
-void SopaSolver::initSopa(int n, const std::list<std::string>& words)
+void SopaSolver::initSopa(int n, const std::list<std::string>& words, std::vector<bool>& added)
 {
     initSopaEmpty(n);
-
+    int k = 0;
     for (const std::string& s : words)
     {
         int times = 10;
         while (!putWord(s) && times--);
+        if (!times) added[k] = false;
+        ++k;
     }
 
     std::uniform_int_distribution<std::mt19937::result_type> distChar('a', 'z');
