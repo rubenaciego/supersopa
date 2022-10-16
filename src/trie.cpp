@@ -105,8 +105,12 @@ void TrieSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& see
 }
 
 void TrieSolver::preorderTraversal(TST* node) {
-    if (node == nullptr) return;
+    if (node == nullptr) {
+        std::cout << 0 << std::endl;
+        return;
+    }
 
+    std::cout << node->letter << std::endl;
     preorderTraversal(node->lowKid);
     preorderTraversal(node->equalKid);
     preorderTraversal(node->highKid);

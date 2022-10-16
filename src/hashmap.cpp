@@ -88,13 +88,14 @@ uint64_t DoubleHash::toHashOffset(uint64_t h) const
 }
 
 bool DoubleHash::searchWord(const std::string& s,
-    uint64_t hashValue, uint64_t hashOffset) const
+    uint64_t hashValue, uint64_t hashOffset, uint64_t& numOperations) const
 {
     hashValue = hashValue % hashTableSize;
     hashOffset = toHashOffset(hashOffset);
     uint64_t initialHashValue = hashValue;
     bool firstIteration = true;
-
+    ++numOperations;
+    
     while(true) {
         if(hashTable[hashValue] == "")
             break;
@@ -105,6 +106,7 @@ bool DoubleHash::searchWord(const std::string& s,
         else
             hashValue = (hashValue + hashOffset)%hashTableSize;
         firstIteration = false;
+        ++numOperations;
     }
     return false;
 }
@@ -165,7 +167,7 @@ void HashMapSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& 
     seen[i][j] = true;
     res.push_back(sopa[i][j]);
 
-    if (!prefixHash.searchWord(res, h1, h2))
+    if (!prefixHash.searchWord(res, h1, h2, totalOperations))
     {
         res.pop_back();
         seen[i][j] = false;
@@ -173,9 +175,8 @@ void HashMapSolver::findWordsFrom(int i, int j, std::vector<std::vector<bool>>& 
     }
 
     if (currlen + 1 >= minlen) {
-        if (doubleHash.searchWord(res, h1, h2))
+        if (doubleHash.searchWord(res, h1, h2, totalOperations))
             found.insert(res);
-        ++totalOperations;
     }
 
     for (int di = -1; di <= 1; ++di)

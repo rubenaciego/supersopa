@@ -17,7 +17,7 @@ public:
     uint64_t updateRollingHash2(uint64_t currhash, uint64_t next) const;
 
     void addWord(const std::string& s);
-    bool searchWord(const std::string& s, uint64_t h1, uint64_t h2) const;
+    bool searchWord(const std::string& s, uint64_t h1, uint64_t h2, uint64_t& numOperations) const;
 
 private:
     const uint64_t p1 = 31;
