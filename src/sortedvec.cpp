@@ -23,6 +23,8 @@ void SortedVecSolver::search(int i, int j, std::unordered_set<std::string>& foun
     visited[i][j] = true;
     word.push_back(sopa[i][j]);
     int n = sopa.size();
+    
+    if (d[left].length() <= len) ++left;
 
     left = std::lower_bound(d.begin() + left, d.begin() + right+1, word,
         [len](const std::string& l, const std::string& r) {
